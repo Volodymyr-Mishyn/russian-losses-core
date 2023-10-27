@@ -1,16 +1,16 @@
-import { Action } from '../_models/action';
+import { Action, ActionExecutionResult } from '../_models/action';
 
 export class LogAction implements Action {
   private _attempt = 0;
-  public execute(): Promise<boolean> {
+  public execute(): Promise<ActionExecutionResult> {
     return new Promise((resolve, reject) => {
       if (this._attempt > 3) {
         this._attempt = 0;
         console.log('error');
-        resolve(false);
+        resolve({ status: false });
       } else {
         console.log(new Date());
-        resolve(true);
+        resolve({ status: true });
       }
       this._attempt++;
     });
