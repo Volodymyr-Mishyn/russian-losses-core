@@ -7,7 +7,10 @@
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["./src/*"]
+    }
   },
-  "exclude": ["./node_modules", "./tests"]
+  "exclude": ["node_modules"]
 }

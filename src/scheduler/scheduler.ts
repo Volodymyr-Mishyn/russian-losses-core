@@ -1,6 +1,6 @@
-import { CronJob } from 'cron';
 import { Action } from '../_models/action';
 import { Schedule } from '../_models/schedule/schedule';
+import { CronJob } from 'cron';
 
 export class Scheduler {
   private _attemptIndex = 0;
@@ -21,11 +21,17 @@ export class Scheduler {
   }
 
   private async _handleScheduledExecution(): Promise<void> {
-    const executionResult = await this._action.execute();
-    console.log('execute result', executionResult);
-    if (executionResult) {
-      return;
+    try {
+      const executionResult = await this._action.execute();
+      console.log('execute result', executionResult);
+      if (executionResult.status) {
+        return;
+      }
+      console.error('Handled error during execution', executionResult.error);
+    } catch (error) {
+      console.error('Not handled error of execution:', error);
     }
+
     if (!this._canMakeAttempt()) {
       return;
     }
@@ -48,11 +54,12 @@ export class Scheduler {
         }
         await this._handleScheduledExecution();
       },
-      start: true,
       context: this,
       timeZone: this._scheduleConfig.timezone,
     });
+    job.start();
   }
+
   public scheduleExecution(): void {
     this._innerScheduleExecution(this._scheduleConfig.cronTime);
   }

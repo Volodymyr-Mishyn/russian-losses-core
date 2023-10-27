@@ -4,6 +4,7 @@
   "description": "",
   "main": "./src/index.ts",
   "scripts": {
+    "test": "npx jest",
     "dev": "nodemon"
   },
   "author": "Volodymyr Mishyn",
