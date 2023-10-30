@@ -15,7 +15,6 @@ export enum OryxTypes {
 }
 
 export interface ScrappingParameters {
-  source: SourceTypes;
   notHeadless?: boolean;
   outputType: OutputTypes;
   outputPath?: string;

@@ -1,16 +1,15 @@
 import { spawn, ChildProcess, fork } from 'child_process';
 import { ProcessParameters } from '../_models/process/process-parameters';
 import * as fs from 'fs';
-import { ProcessHandler } from '../_models/process/process-handler';
+import EventEmitter from 'events';
 
-export class ProcessRunner {
+export class ProcessRunner extends EventEmitter {
   private _process: ChildProcess | null = null;
   private _processBufferLimit = 8192;
 
-  constructor(
-    private _parameters: ProcessParameters,
-    private _processHandler: ProcessHandler,
-  ) {}
+  constructor(private _parameters: ProcessParameters) {
+    super();
+  }
 
   private _setUpProcessEvents(): void {
     if (!this._process) {
@@ -36,12 +35,12 @@ export class ProcessRunner {
       }
       try {
         const parsedData = JSON.parse(filteredResponse)[uniqueKey];
-        await this._processHandler.handle(parsedData);
+        this.emit(`data`, parsedData);
         processingFilteredResponse = false;
         filteredResponse = '';
         this.stop();
       } catch (error) {
-        console.error('Error parsing JSON:', error);
+        console.log('Error parsing JSON:', (error as any).message);
       }
     });
 

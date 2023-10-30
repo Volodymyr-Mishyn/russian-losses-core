@@ -27,7 +27,9 @@ export class Scheduler {
       if (executionResult.status) {
         return;
       }
-      console.error('Handled error during execution', executionResult.error);
+      if (executionResult.error) {
+        console.error('Handled error during execution', executionResult.error);
+      }
     } catch (error) {
       console.error('Not handled error of execution:', error);
     }

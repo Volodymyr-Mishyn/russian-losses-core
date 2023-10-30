@@ -2,7 +2,7 @@ import { OutputTypes, ScrappingParameters, SourceTypes } from '../../_models/scr
 
 export abstract class ScrappingParametersImpl implements ScrappingParameters {
   protected sourceType!: SourceTypes;
-  private _notHeadless = true;
+  private _notHeadless = false;
   private _outputType = OutputTypes.NONE;
   private _outputPath: string | undefined;
 

@@ -1,7 +1,9 @@
-import { OryxScrappingParameters, OryxTypes } from '../../_models/scrapping/scrapping-parameters';
+import { OryxScrappingParameters, OryxTypes, SourceTypes } from '../../_models/scrapping/scrapping-parameters';
 import { ScrappingParametersImpl } from './scrapping-parameters';
 
 export class OryxScrappingParametersImpl extends ScrappingParametersImpl implements OryxScrappingParameters {
+  protected sourceType = SourceTypes.ORYX;
+
   private _subType!: OryxTypes;
 
   get subType() {
