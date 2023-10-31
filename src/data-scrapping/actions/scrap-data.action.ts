@@ -1,6 +1,6 @@
-import { ProcessRunner } from '../process/process-runner';
-import { Action, ActionExecutionResult } from '../_models/action';
-import { DataProcessor } from '../_models/data-processor';
+import { ProcessRunner } from '../../process/process-runner';
+import { Action, ActionExecutionResult } from '../../_models/action';
+import { DataProcessor } from '../../_models/data-processor';
 import { DataSaver } from 'src/_models/data-saver';
 
 export class ScrapDataAction implements Action {
@@ -10,7 +10,6 @@ export class ScrapDataAction implements Action {
     private _dataSaver: DataSaver<unknown>,
   ) {}
   public async execute(): Promise<ActionExecutionResult> {
-    console.log('execute');
     try {
       this._processRunner.run();
       const receivedData = await new Promise((resolve) => {
@@ -20,12 +19,11 @@ export class ScrapDataAction implements Action {
       });
       const processedData = await this._dataProcessor.process(receivedData);
       await this._dataSaver.save(processedData);
-      console.log('Data Handled:', receivedData);
       return {
         status: true,
       };
     } catch (e) {
-      console.log(e);
+      console.log((e as any).message);
       return {
         status: false,
       };

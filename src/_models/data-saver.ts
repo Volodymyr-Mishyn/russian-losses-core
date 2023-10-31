@@ -1,3 +1,3 @@
 export interface DataSaver<D> {
-  save(data: D): boolean;
+  save(data: D): Promise<boolean>;
 }
