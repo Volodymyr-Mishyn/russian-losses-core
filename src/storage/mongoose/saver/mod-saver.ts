@@ -1,9 +1,8 @@
 import { MODData } from '../../../_models/entities/mod/mod-model';
-import { DataSaver } from '../../../_models/data-saver';
 import { MODModel } from '../models/mod.model';
-import { connectDataBase, disconnectDataBase } from '../mongoose';
+import { MongooseSaver } from './mongoose-saver';
 
-export class MODSaver implements DataSaver<MODData> {
+export class MODSaver extends MongooseSaver<MODData> {
   private async _saveMODData(data: MODData): Promise<void> {
     for (const singleDayData of data) {
       const alreadyPresent = await MODModel.findOne({ date: singleDayData.date });
@@ -16,14 +15,7 @@ export class MODSaver implements DataSaver<MODData> {
       }
     }
   }
-  async save(data: MODData): Promise<boolean> {
-    await connectDataBase();
-    try {
-      await this._saveMODData(data);
-    } catch (e) {
-      console.log((e as any).message);
-    }
-    await disconnectDataBase();
-    return true;
+  protected async innerSave(data: MODData): Promise<void> {
+    await this._saveMODData(data);
   }
 }

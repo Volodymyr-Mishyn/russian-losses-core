@@ -1,10 +1,9 @@
-import { DataSaver } from '../../../_models/data-saver';
-import { connectDataBase, disconnectDataBase } from '../mongoose';
 import { EntityModel, EntityType, OryxSideLosses } from '../../../_models/entities/oryx/oryx-model';
 import { OryxEntityModelModel, OryxEntityTypeModel, OryxSideLossesModel } from '../models/oryx.model';
 import { Types } from 'mongoose';
+import { MongooseSaver } from './mongoose-saver';
 
-export class OryxSaver implements DataSaver<OryxSideLosses> {
+export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private async _insertEntities(entitiesData: Array<EntityModel>): Promise<Array<Types.ObjectId>> {
     const insertedEntityModels: Array<Types.ObjectId> = [];
     for (const entityData of entitiesData) {
@@ -70,14 +69,7 @@ export class OryxSaver implements DataSaver<OryxSideLosses> {
     }
   }
 
-  async save(data: OryxSideLosses): Promise<boolean> {
-    await connectDataBase();
-    try {
-      await this._insertSideLosses(data);
-    } catch (e) {
-      console.log((e as any).message);
-    }
-    await disconnectDataBase();
-    return true;
+  protected async innerSave(data: OryxSideLosses): Promise<void> {
+    await this._insertSideLosses(data);
   }
 }
