@@ -1,14 +1,24 @@
 import { EntityModel, EntityType, OryxSideLosses } from '../../../_models/entities/oryx/oryx-model';
 import { OryxEntityModelModel, OryxEntityTypeModel, OryxSideLossesModel } from '../models/oryx.model';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MongooseSaver } from './mongoose-saver';
+import { OryxSideLossesDocument } from '../documents/oryx/oryx-side-losses.document';
+import { OryxEntityTypeDocument } from '../documents/oryx/oryx-entity-type.document';
+import { OryxEntityModelDocument } from '../documents/oryx/oryx-entity-model.document';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
+  constructor(
+    private _oryxSideLossesModel: Model<OryxSideLossesDocument> = OryxSideLossesModel,
+    private _oryxEntityTypeModel: Model<OryxEntityTypeDocument> = OryxEntityTypeModel,
+    private _oryxEntityModelModel: Model<OryxEntityModelDocument> = OryxEntityModelModel,
+  ) {
+    super();
+  }
   private async _insertEntities(entitiesData: Array<EntityModel>): Promise<Array<Types.ObjectId>> {
     const insertedEntityModels: Array<Types.ObjectId> = [];
     for (const entityData of entitiesData) {
       const { name, countryName, entityType } = entityData;
-      const existingEntity = await OryxEntityModelModel.findOne({ name, countryName, entityType });
+      const existingEntity = await this._oryxEntityModelModel.findOne({ name, countryName, entityType });
       if (existingEntity) {
         const { count, abandoned, captured, damaged, destroyed, damagedAndCaptured, damagedAndAbandoned } = entityData;
         existingEntity.count = count;
@@ -21,7 +31,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         await existingEntity.save();
         insertedEntityModels.push(existingEntity._id);
       } else {
-        const newEntity = new OryxEntityModelModel(entityData);
+        const newEntity = new this._oryxEntityModelModel(entityData);
         await newEntity.save();
         insertedEntityModels.push(newEntity._id);
       }
@@ -35,7 +45,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
       const { name, countryName, entities } = entityTypeData;
       const savedEntities = await this._insertEntities(entities);
       const savedEntitiesSet = new Set([...savedEntities]);
-      const existingEntityType = await OryxEntityTypeModel.findOne({ name, countryName });
+      const existingEntityType = await this._oryxEntityTypeModel.findOne({ name, countryName });
       if (existingEntityType) {
         const { statistics } = entityTypeData;
         existingEntityType.statistics = statistics;
@@ -43,7 +53,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         await existingEntityType.save();
         insertedEntityTypeModels.push(existingEntityType._id);
       } else {
-        const newEntityType = new OryxEntityTypeModel({
+        const newEntityType = new this._oryxEntityTypeModel({
           ...entityTypeData,
           entities: Array.from(savedEntitiesSet),
         });
@@ -58,13 +68,17 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
     const { entityTypes, countryName, name } = data;
     const savedEntityTypes = await this._insertEntityTypes(entityTypes);
     const savedEntityTypesSet = new Set([...savedEntityTypes]);
-    let existingEntitySideLosses = await OryxSideLossesModel.findOne({ countryName, name });
+    let existingEntitySideLosses = await this._oryxSideLossesModel.findOne({ countryName, name });
     if (existingEntitySideLosses) {
       const { statistics } = data;
       existingEntitySideLosses.statistics = statistics;
       existingEntitySideLosses.entityTypes = Array.from(savedEntityTypesSet);
+      await existingEntitySideLosses.save();
     } else {
-      const newEntitySideLosses = new OryxSideLossesModel({ ...data, entityTypes: Array.from(savedEntityTypesSet) });
+      const newEntitySideLosses = new this._oryxSideLossesModel({
+        ...data,
+        entityTypes: Array.from(savedEntityTypesSet),
+      });
       await newEntitySideLosses.save();
     }
   }
