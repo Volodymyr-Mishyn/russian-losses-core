@@ -7,20 +7,21 @@ interface DataBaseConfig {
   Port: number;
   Protocol: string;
 }
-const databaseConfig = config.get<DataBaseConfig>('DataBaseConfig');
-const { DataBase, Host, Port, Protocol } = databaseConfig;
 
-const MONGODB_URI = `${Protocol}://${Host}:${Port}/${DataBase}`;
-mongoose
-  .connect(MONGODB_URI, {
-    autoCreate: true,
-    autoIndex: true,
-  })
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-  });
+export async function connectDataBase() {
+  const databaseConfig = config.get<DataBaseConfig>('DataBaseConfig');
+  const { DataBase, Host, Port, Protocol } = databaseConfig;
+  const MONGODB_URI = `${Protocol}://${Host}:${Port}/${DataBase}`;
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      autoCreate: true,
+      autoIndex: true,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
 
-export default mongoose;
+export async function disconnectDataBase() {
+  await mongoose.connection.close();
+}

@@ -17,6 +17,8 @@ export interface EntityModel {
   count: number;
   description?: string;
   image?: string;
+  countryName: string;
+  entityType: string;
   destroyed: EntityStatusInfo;
   damaged: EntityStatusInfo;
   captured: EntityStatusInfo;
@@ -26,19 +28,21 @@ export interface EntityModel {
 }
 
 export interface EntityType {
-  //tank
+  //tanks
   name: string;
+  countryName: string;
   description?: string;
   image?: string;
   statistics: Statistics;
-  details: Array<EntityModel>;
+  entities: Array<EntityModel>;
 }
 
 export interface OryxSideLosses {
   //Russia
   name: string;
+  countryName: string;
   date: Date;
   image?: string;
   statistics: Statistics;
-  entities: Array<EntityType>;
+  entityTypes: Array<EntityType>;
 }

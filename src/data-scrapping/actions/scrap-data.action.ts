@@ -14,6 +14,7 @@ export class ScrapDataAction implements Action {
       this._processRunner.run();
       const receivedData = await new Promise((resolve) => {
         this._processRunner.once('data', (data) => {
+          console.log('\x1b[36m%s\x1b[0m', 'Data parsed successfully');
           resolve(data);
         });
       });

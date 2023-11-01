@@ -1,13 +1,14 @@
-import { Model, Schema } from 'mongoose';
-import { MODDayDocument } from '../documents/mod.document';
-import mongoose from '../mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
+import { MODDayDocument } from '../documents/mod/mod.document';
 import { StorageNames } from '../../enums/storage-names.enum';
+
 export interface MODDayModelModel extends Model<MODDayDocument> {}
 
 const MODDaySchema = new Schema<MODDayDocument>(
   {
     date: {
       type: Date,
+      required: true,
     },
     casualties: [
       {
