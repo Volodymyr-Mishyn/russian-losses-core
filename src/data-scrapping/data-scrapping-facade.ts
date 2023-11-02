@@ -2,7 +2,7 @@ import { DataSaver } from '../_models/data-saver';
 import { OryxTypes, OutputTypes } from '../_models/scrapping/scrapping-parameters';
 import { MODScrappingParametersImpl } from './parameters/mod-scrapping-parameters';
 import { MODData } from '../_models/entities/mod/mod-model';
-import { ProcessParameters, RunnerType } from '../_models/process/process-parameters';
+import { ProcessBaseParameters, ProcessParameters, RunnerType } from '../_models/process/process-parameters';
 import { ProcessRunner } from '../process/process-runner';
 import { ScrapDataAction } from './actions/scrap-data.action';
 import { MODDataProcessor } from './processors/mod-data-processor';
@@ -10,14 +10,25 @@ import { Action } from '../_models/action';
 import { OryxSideLosses } from '../_models/entities/oryx/oryx-model';
 import { OryxScrappingParametersImpl } from './parameters/oryx-scrapping-parameters';
 import { OryxDataProcessor } from './processors/oryx-data-processor';
+import { DatabaseAccessor } from 'src/_models/storage/database-accessor';
 
 export class DataScrappingFacade {
+  private _scriptPath!: string;
+  private _scriptRunner!: RunnerType;
+  private _modSaver!: DataSaver<MODData>;
+  private _oryxSaver!: DataSaver<OryxSideLosses>;
   constructor(
-    private _scriptPath: string,
-    private _scriptRunner: RunnerType,
-  ) {}
+    private _processParameters: ProcessBaseParameters,
+    private _databaseAccessor: DatabaseAccessor,
+  ) {
+    const { runner, entryPath } = this._processParameters;
+    this._scriptPath = entryPath;
+    this._scriptRunner = runner;
+    this._modSaver = this._databaseAccessor.getMODSaver();
+    this._oryxSaver = this._databaseAccessor.getOryxSaver();
+  }
 
-  public createScrapAllMODReportsAction(saver: DataSaver<MODData>): Action {
+  public createScrapAllMODReportsAction(): Action {
     const modUniqueString = `MOD-${Date.now().toString()}`;
     const modParameters = new MODScrappingParametersImpl();
     modParameters.outputType = OutputTypes.PROCESS;
@@ -30,11 +41,11 @@ export class DataScrappingFacade {
       uniqueKey: modUniqueString,
     };
     const processMOD = new ProcessRunner(processMODParams);
-    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), saver);
+    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), this._modSaver);
     return scrapMODDataAction;
   }
 
-  public createScrapRecentMODReportsAction(saver: DataSaver<MODData>): Action {
+  public createScrapRecentMODReportsAction(): Action {
     const modUniqueString = `MOD-${Date.now().toString()}`;
     const modParameters = new MODScrappingParametersImpl();
     modParameters.outputType = OutputTypes.PROCESS;
@@ -46,11 +57,11 @@ export class DataScrappingFacade {
       uniqueKey: modUniqueString,
     };
     const processMOD = new ProcessRunner(processMODParams);
-    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), saver);
+    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), this._modSaver);
     return scrapMODDataAction;
   }
 
-  public createScrapRussianLossesOryxAction(saver: DataSaver<OryxSideLosses>): Action {
+  public createScrapRussianLossesOryxAction(): Action {
     const oryxRussianParameters = new OryxScrappingParametersImpl();
     oryxRussianParameters.subType = OryxTypes.RUSSIA;
     oryxRussianParameters.outputType = OutputTypes.PROCESS;
@@ -64,11 +75,11 @@ export class DataScrappingFacade {
     };
     console.log(oryxRussianParameters.getParameters());
     const processOryxRussia = new ProcessRunner(processOryxRussiaParams);
-    const scrapOryxRussiaDataAction = new ScrapDataAction(processOryxRussia, new OryxDataProcessor(), saver);
+    const scrapOryxRussiaDataAction = new ScrapDataAction(processOryxRussia, new OryxDataProcessor(), this._oryxSaver);
     return scrapOryxRussiaDataAction;
   }
 
-  public createScrapUkrainianLossesOryxAction(saver: DataSaver<OryxSideLosses>): Action {
+  public createScrapUkrainianLossesOryxAction(): Action {
     const oryxUkrainianParameters = new OryxScrappingParametersImpl();
     oryxUkrainianParameters.subType = OryxTypes.UKRAINE;
     oryxUkrainianParameters.outputType = OutputTypes.PROCESS;
@@ -82,7 +93,11 @@ export class DataScrappingFacade {
     };
     console.log(oryxUkrainianParameters.getParameters());
     const processOryxUkraine = new ProcessRunner(processOryxUkraineParams);
-    const scrapOryxUkraineDataAction = new ScrapDataAction(processOryxUkraine, new OryxDataProcessor(), saver);
+    const scrapOryxUkraineDataAction = new ScrapDataAction(
+      processOryxUkraine,
+      new OryxDataProcessor(),
+      this._oryxSaver,
+    );
     return scrapOryxUkraineDataAction;
   }
 }

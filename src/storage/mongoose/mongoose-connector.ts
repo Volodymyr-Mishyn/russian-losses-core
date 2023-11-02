@@ -10,6 +10,8 @@ interface DataBaseConfig {
 
 export class MongooseConnector {
   private static _instance: MongooseConnector | null = null;
+  private _delayedDisconnectTime = 120000;
+  private _disconnectTimeout: NodeJS.Timeout | null = null;
   private _connectionEstablished = false;
   private constructor() {}
 
@@ -32,7 +34,7 @@ export class MongooseConnector {
       return;
     }
     this.connectionEstablished = true;
-    const databaseConfig = config.get<DataBaseConfig>('DataBaseConfig');
+    const databaseConfig = config.get<DataBaseConfig>('DataBase.Config');
     const { DataBase, Host, Port, Protocol } = databaseConfig;
     const MONGODB_URI = `${Protocol}://${Host}:${Port}/${DataBase}`;
     try {
@@ -42,7 +44,7 @@ export class MongooseConnector {
       });
       console.log('\x1b[32m%s\x1b[0m', 'Database connection established');
     } catch (e) {
-      console.log((e as any).message);
+      console.log('\x1b[32m%s\x1b[0m', (e as any).message);
     }
   }
 
@@ -51,6 +53,16 @@ export class MongooseConnector {
       return;
     }
     await mongoose.connection.close();
+    this.connectionEstablished = false;
     console.log('\x1b[32m%s\x1b[0m', 'Database disconnected');
+  }
+
+  public scheduleDisconnect() {
+    if (this._disconnectTimeout) {
+      clearTimeout(this._disconnectTimeout);
+    }
+    this._disconnectTimeout = setTimeout(() => {
+      this.disconnectDataBase();
+    }, this._delayedDisconnectTime);
   }
 }

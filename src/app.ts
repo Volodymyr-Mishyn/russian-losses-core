@@ -1,19 +1,21 @@
 import path from 'path';
+import config from 'config';
+
+import { DataScrappingApp } from './data-scrapping/data-scrapping-app';
+import { DatabaseAccessor } from './_models/storage/database-accessor';
+import { DatabaseAccessorFactory } from './storage/database-accessor.factory';
 import { RunnerType } from './_models/process/process-parameters';
-import { DataScrappingFacade } from './data-scrapping/data-scrapping-facade';
-import { MODSaver } from './storage/mongoose/saver/mod-saver';
-import { OryxSaver } from './storage/mongoose/saver/oryx-saver';
 
 const appDir = path.dirname(require?.main?.filename || '');
 const childScriptPath = path.join(appDir, '../../russian-losses-scrapper/src/index.ts');
+
+const databaseType = config.get<string>('DataBase.Type');
+
+const databaseAccessor: DatabaseAccessor = DatabaseAccessorFactory.create(databaseType);
 export async function run() {
-  const scrappingFacade = new DataScrappingFacade(childScriptPath, RunnerType.TS);
-  const modSaver = new MODSaver();
-  const oryxSaver = new OryxSaver();
-  const shouldScrapAll = true;
-  if (shouldScrapAll) {
-    // const action = scrappingFacade.createScrapRecentMODReportsAction(modSaver);
-    const action = scrappingFacade.createScrapRussianLossesOryxAction(oryxSaver);
-    await action.execute();
-  }
+  const dataScrappingApp = new DataScrappingApp(databaseAccessor, {
+    entryPath: childScriptPath,
+    runner: RunnerType.TS,
+  });
+  dataScrappingApp.runInitial();
 }
