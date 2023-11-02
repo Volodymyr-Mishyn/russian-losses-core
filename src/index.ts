@@ -1,1 +1,3 @@
-console.log('init!');
+import { run } from './app';
+
+run();

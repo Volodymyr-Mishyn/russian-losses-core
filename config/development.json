@@ -1,0 +1,38 @@
+{
+  "DataBase": {
+    "Type": "mongodb",
+    "Config": {
+      "Protocol": "mongodb",
+      "Host": "127.0.0.1",
+      "Port": 27017,
+      "DataBase": "russian-losses"
+    }
+  },
+  "Scrapping": {
+    "Oryx": [
+      {
+        "oryxType": "Russia",
+        "Schedule": {
+          "cronTime": "0 12 * * *",
+          "attempts": ["0 13 * * *"],
+          "timezone": "Europe/Kiev"
+        }
+      },
+      {
+        "oryxType": "Ukraine",
+        "Schedule": {
+          "cronTime": "30 12 * * *",
+          "attempts": ["30 13 * * *"],
+          "timezone": "Europe/Kiev"
+        }
+      }
+    ],
+    "MOD": {
+      "Schedule": {
+        "cronTime": "0 9 * * *",
+        "attempts": ["30 9 * * *", "0 10 * * *", "0 11 * * *"],
+        "timezone": "Europe/Kiev"
+      }
+    }
+  }
+}
