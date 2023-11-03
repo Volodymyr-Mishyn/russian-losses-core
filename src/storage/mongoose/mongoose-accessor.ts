@@ -9,23 +9,20 @@ import { OryxSideLossesDocument } from './documents/oryx/oryx-side-losses.docume
 import { OryxEntityModelModel, OryxEntityTypeModel, OryxSideLossesModel } from './models/oryx.model';
 import { OryxEntityTypeDocument } from './documents/oryx/oryx-entity-type.document';
 import { OryxEntityModelDocument } from './documents/oryx/oryx-entity-model.document';
-import { MongooseConnector } from './mongoose-connector';
 import { MODModel } from './models/mod.model';
 import { MODDayDocument } from './documents/mod/mod.document';
+import { EstablishedDatabaseConnection } from './mongoose-connector.decorator';
 
 export class MongooseAccessor implements DatabaseAccessor {
   private _modSaver = new MODSaver();
   private _oryxSaver = new OryxSaver();
-  private _connector = MongooseConnector.getInstance();
 
   constructor(
     private _MODModel: Model<MODDayDocument> = MODModel,
     private _oryxSideLossesModel: Model<OryxSideLossesDocument> = OryxSideLossesModel,
     private _oryxEntityTypeModel: Model<OryxEntityTypeDocument> = OryxEntityTypeModel,
     private _oryxEntityModelModel: Model<OryxEntityModelDocument> = OryxEntityModelModel,
-  ) {
-    this._connector.connectDataBase();
-  }
+  ) {}
 
   public getMODSaver(): DataSaver<MODData> {
     return this._modSaver;
@@ -35,20 +32,24 @@ export class MongooseAccessor implements DatabaseAccessor {
     return this._oryxSaver;
   }
 
+  @EstablishedDatabaseConnection({})
   public async getIsMODDataPresent(): Promise<boolean> {
     const count = await this._MODModel.find({}).count().exec();
     return count > 0;
   }
 
+  @EstablishedDatabaseConnection({})
   public async getIsOryxCountryDataPresent(countryName: string): Promise<boolean> {
     const oryxSideLosses = await this._oryxSideLossesModel.findOne({ countryName: countryName.toUpperCase() }).exec();
     return !!oryxSideLosses;
   }
 
+  @EstablishedDatabaseConnection({})
   public async getAllMODData(): Promise<MODData> {
     return this._MODModel.find({}).exec();
   }
 
+  @EstablishedDatabaseConnection({})
   public async getMODDataInRange(startDate: string, endDate: string): Promise<MODData> {
     return this._MODModel
       .find({
@@ -57,33 +58,34 @@ export class MongooseAccessor implements DatabaseAccessor {
       .exec();
   }
 
+  @EstablishedDatabaseConnection({})
   public async getMODDataForDay(date: string): Promise<DayResult | null> {
     return this._MODModel.findOne({ date: new Date(date) }).exec();
   }
 
+  @EstablishedDatabaseConnection({})
   public async getAllOryxDataForCountry(countryName: string): Promise<OryxSideLosses> {
-    const oryxSideLosses = (await this._oryxSideLossesModel
+    return (await this._oryxSideLossesModel
       .findOne({ countryName: countryName.toUpperCase() })
       .populate('entityTypes')
       .populate('entityTypes.entities')
       .exec()) as unknown as Promise<OryxSideLosses>;
-    this._connector.scheduleDisconnect();
-    return oryxSideLosses;
   }
 
+  @EstablishedDatabaseConnection({})
   public async getOryxDataForCountry(countryName: string): Promise<Omit<OryxSideLosses, 'entityTypes'>> {
-    const oryxSideLosses = (await this._oryxSideLossesModel
+    return (await this._oryxSideLossesModel
       .findOne({ countryName: countryName.toUpperCase() })
       .select('-entityTypes')
       .exec()) as unknown as Promise<Omit<OryxSideLosses, 'entityTypes'>>;
-    this._connector.scheduleDisconnect();
-    return oryxSideLosses;
   }
 
+  @EstablishedDatabaseConnection({})
   public async getOryxEntityTypesForCountry(countryName: string): Promise<Omit<EntityType, 'entities'>[]> {
     return this._oryxEntityTypeModel.find({ countryName: countryName.toUpperCase() }).select('-entities').exec();
   }
 
+  @EstablishedDatabaseConnection({})
   public async getOryxEntitiesByTypesForCountry(countryName: string, entityType: string): Promise<unknown[]> {
     return this._oryxEntityModelModel.find({ countryName: countryName.toUpperCase(), entityType }).exec();
   }
