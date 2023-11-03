@@ -35,6 +35,16 @@ export class MongooseAccessor implements DatabaseAccessor {
     return this._oryxSaver;
   }
 
+  public async getIsMODDataPresent(): Promise<boolean> {
+    const count = await this._MODModel.find({}).count().exec();
+    return count > 0;
+  }
+
+  public async getIsOryxCountryDataPresent(countryName: string): Promise<boolean> {
+    const oryxSideLosses = await this._oryxSideLossesModel.findOne({ countryName: countryName.toUpperCase() }).exec();
+    return !!oryxSideLosses;
+  }
+
   public async getAllMODData(): Promise<MODData> {
     return this._MODModel.find({}).exec();
   }

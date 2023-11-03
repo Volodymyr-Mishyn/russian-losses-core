@@ -23,7 +23,6 @@ export class Scheduler {
   private async _handleScheduledExecution(): Promise<void> {
     try {
       const executionResult = await this._action.execute();
-      console.log('execute result', executionResult);
       if (executionResult.status) {
         return;
       }
@@ -47,7 +46,6 @@ export class Scheduler {
   }
 
   private _innerScheduleExecution(cronTime: string, isRetry = false): void {
-    console.log('schedule', cronTime, isRetry);
     const job = CronJob.from({
       cronTime,
       onTick: async () => {
@@ -59,6 +57,8 @@ export class Scheduler {
       context: this,
       timeZone: this._scheduleConfig.timezone,
     });
+    const infoString = `Execution scheduled on ${job.nextDate()}`;
+    console.log('\x1b[30m%s\x1b[0m', infoString);
     job.start();
   }
 
