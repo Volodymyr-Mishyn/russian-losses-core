@@ -1,7 +1,7 @@
 import path from 'path';
 import config from 'config';
 
-import { DataScrappingApp } from './data-scrapping/data-scrapping-app';
+import { DataScrappingApp } from './data-scrapping/data-scrapping.app';
 import { DatabaseAccessor } from './_models/storage/database-accessor';
 import { DatabaseAccessorFactory } from './storage/database-accessor.factory';
 import { RunnerType } from './_models/process/process-parameters';

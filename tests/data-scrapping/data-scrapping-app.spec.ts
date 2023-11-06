@@ -1,6 +1,6 @@
 import { Action } from 'src/_models/action';
 import { ScheduledScrapping } from 'src/_models/schedule/scheduled-scrapping';
-import { DataScrappingApp } from 'src/data-scrapping/data-scrapping-app';
+import { DataScrappingApp } from 'src/data-scrapping/data-scrapping.app';
 import { SchedulerFactory } from 'src/scheduler/scheduler-factory';
 
 jest.mock('src/_helpers/delay', () => ({
