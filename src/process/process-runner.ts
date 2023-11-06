@@ -1,4 +1,4 @@
-import { spawn, ChildProcess, fork } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { ProcessParameters } from '../_models/process/process-parameters';
 import * as fs from 'fs';
 import EventEmitter from 'events';
