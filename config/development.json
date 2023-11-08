@@ -8,6 +8,10 @@
       "DataBase": "russian-losses"
     }
   },
+  "Server": {
+    "BaseURL": "/api",
+    "Port": 3000
+  },
   "Scrapping": {
     "Oryx": {
       "Russia": {

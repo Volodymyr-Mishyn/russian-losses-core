@@ -68,7 +68,10 @@ export class MongooseAccessor implements DatabaseAccessor {
     return (await this._oryxSideLossesModel
       .findOne({ countryName: countryName.toUpperCase() })
       .populate('entityTypes')
-      .populate('entityTypes.entities')
+      .populate({
+        path: 'entityTypes',
+        populate: { path: 'entities' },
+      })
       .exec()) as unknown as Promise<OryxSideLosses>;
   }
 
