@@ -1,3 +1,4 @@
-import { run } from './app';
+import { Application } from './app';
 
-run();
+const app = Application.getInstance();
+app.run();

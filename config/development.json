@@ -8,31 +8,27 @@
       "DataBase": "russian-losses"
     }
   },
+  "Server": {
+    "BaseURL": "/api",
+    "Port": 3000
+  },
   "Scrapping": {
-    "Oryx": [
-      {
-        "oryxType": "Russia",
-        "Schedule": {
-          "cronTime": "0 12 * * *",
-          "attempts": ["0 13 * * *"],
-          "timezone": "Europe/Kiev"
-        }
+    "Oryx": {
+      "Russia": {
+        "cronTime": "0 12 * * *",
+        "attempts": ["0 13 * * *"],
+        "timezone": "Europe/Kiev"
       },
-      {
-        "oryxType": "Ukraine",
-        "Schedule": {
-          "cronTime": "30 12 * * *",
-          "attempts": ["30 13 * * *"],
-          "timezone": "Europe/Kiev"
-        }
-      }
-    ],
-    "MOD": {
-      "Schedule": {
-        "cronTime": "0 9 * * *",
-        "attempts": ["30 9 * * *", "0 10 * * *", "0 11 * * *"],
+      "Ukraine": {
+        "cronTime": "30 12 * * *",
+        "attempts": ["30 13 * * *"],
         "timezone": "Europe/Kiev"
       }
+    },
+    "MOD": {
+      "cronTime": "30 9 * * *",
+      "attempts": ["45 9 * * *", "15 10 * * *", "0 11 * * *"],
+      "timezone": "Europe/Kiev"
     }
   }
 }

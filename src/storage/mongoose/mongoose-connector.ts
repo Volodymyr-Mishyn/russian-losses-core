@@ -57,12 +57,13 @@ export class MongooseConnector {
     console.log('\x1b[32m%s\x1b[0m', 'Database disconnected');
   }
 
-  public scheduleDisconnect() {
+  public scheduleDisconnect(disconnectTime: number = this._delayedDisconnectTime) {
     if (this._disconnectTimeout) {
       clearTimeout(this._disconnectTimeout);
     }
     this._disconnectTimeout = setTimeout(() => {
       this.disconnectDataBase();
-    }, this._delayedDisconnectTime);
+    }, disconnectTime);
+    console.log('\x1b[32m%s\x1b[0m', `Database disconnection scheduled in ${disconnectTime / 1000}seconds`);
   }
 }

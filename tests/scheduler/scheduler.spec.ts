@@ -8,6 +8,7 @@ const mockCronJob = {
   },
   stop: jest.fn(),
   onTick: jest.fn(),
+  nextDate: () => 'next date',
 };
 
 jest.mock('cron', () => {

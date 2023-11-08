@@ -5,6 +5,8 @@ import { EntityType, OryxSideLosses } from '../entities/oryx/oryx-model';
 export interface DatabaseAccessor {
   getMODSaver(): DataSaver<MODData>;
   getOryxSaver(): DataSaver<OryxSideLosses>;
+  getIsMODDataPresent(): Promise<boolean>;
+  getIsOryxCountryDataPresent(countryName: string): Promise<boolean>;
   getAllMODData(): Promise<MODData>;
   getMODDataInRange(startDate: string, endDate: string): Promise<MODData>;
   getMODDataForDay(startDate: string, endDate: string): Promise<DayResult | null>;

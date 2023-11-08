@@ -10,7 +10,7 @@ import { Action } from '../_models/action';
 import { OryxSideLosses } from '../_models/entities/oryx/oryx-model';
 import { OryxScrappingParametersImpl } from './parameters/oryx-scrapping-parameters';
 import { OryxDataProcessor } from './processors/oryx-data-processor';
-import { DatabaseAccessor } from 'src/_models/storage/database-accessor';
+import { DatabaseAccessor } from '../_models/storage/database-accessor';
 
 export class DataScrappingFacade {
   private _scriptPath!: string;

@@ -1,7 +1,7 @@
 import { ProcessRunner } from '../../process/process-runner';
 import { Action, ActionExecutionResult } from '../../_models/action';
 import { DataProcessor } from '../../_models/data-processor';
-import { DataSaver } from 'src/_models/data-saver';
+import { DataSaver } from '../../_models/data-saver';
 
 export class ScrapDataAction implements Action {
   constructor(
