@@ -44,7 +44,8 @@ export class Application {
       schedulerFactory,
       scheduleConfig,
     );
-    if (!this._isDataAlreadyPresent()) {
+    const isDataPresent = await this._isDataAlreadyPresent();
+    if (!isDataPresent) {
       await dataScrappingApp.runInitial();
     }
     dataScrappingApp.runScheduled();

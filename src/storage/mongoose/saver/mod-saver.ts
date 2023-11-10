@@ -8,6 +8,7 @@ export class MODSaver extends MongooseSaver<MODData> {
   constructor(private _MODModel: Model<MODDayDocument> = MODModel) {
     super();
   }
+
   private async _saveMODData(data: MODData): Promise<void> {
     for (const singleDayData of data) {
       const alreadyPresent = await this._MODModel.findOne({ date: singleDayData.date });
@@ -20,6 +21,7 @@ export class MODSaver extends MongooseSaver<MODData> {
       }
     }
   }
+
   protected async innerSave(data: MODData): Promise<void> {
     await this._saveMODData(data);
   }
