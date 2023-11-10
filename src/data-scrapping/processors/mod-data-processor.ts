@@ -1,19 +1,106 @@
-import { delay } from '../../_helpers/delay';
 import { DataProcessor } from '../../_models/data-processor';
-import { MODScrapData } from '../../_models/scrapping/scrap-results/mod-scrap-data';
+import { MODDayResult, MODEntityLoss, MODScrapData } from '../../_models/scrapping/scrap-results/mod-scrap-data';
 import { ScrapResult } from '../../_models/scrapping/scrap-results/scrap-result';
-import { MODData } from '../../_models/entities/mod/mod-model';
+import { DayResult, MODData } from '../../_models/entities/mod/mod-model';
 
+const CASUALTY_NAMES = [
+  'Tanks',
+  'Armored fighting vehicle',
+  'Artillery systems',
+  'MLRS',
+  'Anti-aircraft warfare',
+  'Planes',
+  'Helicopters',
+  'UAV',
+  'Cruise missiles',
+  'Ships (boats)',
+  'Submarines',
+  'Cars and cisterns',
+  'Special equipment',
+  'Military personnel',
+];
+
+const NAME_MAPPINGS: { [oldName: string]: string } = {
+  Cars: 'Cars and cisterns',
+  'Cisterns with fuel': 'Cars and cisterns',
+  'Mobile SRBM': 'MLRS',
+  'MLRS Grad': 'MLRS',
+  'BUK missile system': 'Anti-aircraft warfare',
+};
 export class MODDataProcessor implements DataProcessor<ScrapResult<MODScrapData>, MODData> {
-  async process(data: ScrapResult<MODScrapData>): Promise<MODData> {
-    await delay(500);
-    const { data: daysData } = data.result;
-    const processedData: MODData = daysData.map((dayData) => {
+  private _createCasualtiesMap(casualties: Array<MODEntityLoss>): Map<string, MODEntityLoss> {
+    const casualtiesMap = new Map<string, MODEntityLoss>();
+    casualties.forEach((previousDayEntity) => {
+      casualtiesMap.set(previousDayEntity.name, previousDayEntity);
+    });
+    return casualtiesMap;
+  }
+
+  private _mergeCasualtiesWithSimilarNames(casualtyData: Array<MODEntityLoss>): Array<MODEntityLoss> {
+    const mergedCasualtiesMap = new Map<string, MODEntityLoss>();
+
+    casualtyData.forEach((casualtyInfo) => {
+      const existingCasualty = mergedCasualtiesMap.get(casualtyInfo.name);
+      if (existingCasualty) {
+        mergedCasualtiesMap.set(casualtyInfo.name, {
+          name: casualtyInfo.name,
+          total: existingCasualty.total + casualtyInfo.total,
+          increment: existingCasualty.increment + casualtyInfo.increment,
+        });
+      } else {
+        mergedCasualtiesMap.set(casualtyInfo.name, {
+          name: casualtyInfo.name,
+          total: casualtyInfo.total,
+          increment: casualtyInfo.increment,
+        });
+      }
+    });
+
+    return Array.from(mergedCasualtiesMap.values());
+  }
+
+  private _processDayResult(dayResult: MODDayResult, previousDayResult: MODDayResult): DayResult {
+    const processedDayResult = { ...dayResult };
+    const previousDayData: null | Map<string, MODEntityLoss> = previousDayResult
+      ? this._createCasualtiesMap(previousDayResult.casualties)
+      : null;
+
+    processedDayResult.casualties = processedDayResult.casualties.map((casualtyInfo) => ({
+      ...casualtyInfo,
+      name: NAME_MAPPINGS[casualtyInfo.name] || casualtyInfo.name,
+    }));
+    const existingCasualtyNamesSet = new Set(processedDayResult.casualties.map((casualtyInfo) => casualtyInfo.name));
+    const missingCasualtyNames = CASUALTY_NAMES.filter((name) => !existingCasualtyNamesSet.has(name));
+    const missingCasualties: Array<MODEntityLoss> = missingCasualtyNames.map((casualtyName) => {
+      const casualtyData: MODEntityLoss | null = previousDayData?.get(casualtyName) || null;
       return {
-        date: new Date(dayData.date),
-        casualties: dayData.casualties,
+        name: casualtyName,
+        total: casualtyData?.total || 0,
+        increment: 0,
       };
     });
+    const updatedCasualtiesWithAllFields = [...processedDayResult.casualties, ...missingCasualties];
+
+    return {
+      ...processedDayResult,
+      date: new Date(dayResult.date),
+      casualties: this._mergeCasualtiesWithSimilarNames(updatedCasualtiesWithAllFields),
+    };
+  }
+
+  private async _processMODData(daysData: MODScrapData): Promise<MODData> {
+    const processedData: MODData = [];
+    daysData.forEach((currentDayData, index) => {
+      const previousDayData = daysData[index - 1];
+      const processedDayData = this._processDayResult(currentDayData, previousDayData);
+      processedData.push(processedDayData);
+    });
     return processedData;
+  }
+
+  public async process(data: ScrapResult<MODScrapData>): Promise<MODData> {
+    const { data: daysData } = data.result;
+
+    return this._processMODData(daysData);
   }
 }
