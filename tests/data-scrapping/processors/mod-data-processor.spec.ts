@@ -187,11 +187,6 @@ describe('MODDataProcessor', () => {
                   increment: 1,
                 },
                 {
-                  name: 'Armored fighting vehicle',
-                  total: 0,
-                  increment: 0,
-                },
-                {
                   name: 'Mobile SRBM',
                   total: 0,
                   increment: 0,
@@ -318,7 +313,17 @@ describe('MODDataProcessor', () => {
       };
       const modDataProcessor = new MODDataProcessor();
       const processedData = await modDataProcessor.process(mockScrapResult);
+      const firstDayData = processedData[0];
       const secondDayData = processedData[1];
+      expect(firstDayData.casualties).toEqual(
+        expect.arrayContaining([
+          {
+            name: 'Armored fighting vehicle',
+            total: 0,
+            increment: 0,
+          },
+        ]),
+      );
       expect(secondDayData.casualties).toEqual(
         expect.arrayContaining([
           { name: 'Tanks', total: 1, increment: 0 },
