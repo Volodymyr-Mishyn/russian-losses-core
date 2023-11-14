@@ -1,34 +1,25 @@
 import { Request, Response } from 'express';
 import { DatabaseAccessor } from '../../_models/storage/database-accessor';
+import { MODData } from '../../_models/entities/mod/mod-model';
+import { flattenMODData } from '../../_helpers/mod-utils/mod-flattener';
 
 export class DataController {
   constructor(private _dataBaseAccessor: DatabaseAccessor) {}
 
-  private async _getAllMODData(request: Request, response: Response) {
-    try {
-      const allMODData = await this._dataBaseAccessor.getAllMODData();
-      response.send(allMODData);
-    } catch (error) {
-      response.status(500).send();
-    }
-  }
-
-  private async _getMODDataInRange(request: Request, response: Response) {
-    const { start, end } = request.query;
-    try {
-      const data = await this._dataBaseAccessor.getMODDataInRange(`${start}`, `${end}`);
-      response.send(data);
-    } catch (error) {
-      response.status(500).send();
-    }
-  }
-
   public async getMODData(request: Request, response: Response) {
-    const { start, end } = request.query;
-    if (start && end) {
-      return this._getMODDataInRange(request, response);
+    const { start, end, flat } = request.query;
+    try {
+      let data: MODData;
+      if (start && end) {
+        data = await this._dataBaseAccessor.getMODDataInRange(`${start}`, `${end}`);
+      } else {
+        data = await this._dataBaseAccessor.getAllMODData();
+      }
+      const responseData = flat ? flattenMODData(data) : data;
+      response.send(responseData);
+    } catch (error) {
+      response.status(500).send();
     }
-    return this._getAllMODData(request, response);
   }
 
   public async getOryxCountryData(request: Request, response: Response) {

@@ -1,7 +1,7 @@
 import { DataProcessor } from '../../_models/data-processor';
 import { MODDayResult, MODEntityLoss, MODScrapData } from '../../_models/scrapping/scrap-results/mod-scrap-data';
 import { ScrapResult } from '../../_models/scrapping/scrap-results/scrap-result';
-import { DayResult, MODData } from '../../_models/entities/mod/mod-model';
+import { DayResult, EntityLoss, MODData } from '../../_models/entities/mod/mod-model';
 
 const CASUALTY_NAMES = [
   'Tanks',
@@ -20,12 +20,29 @@ const CASUALTY_NAMES = [
   'Military personnel',
 ];
 
-const NAME_MAPPINGS: { [oldName: string]: string } = {
+const LEGACY_NAME_MAPPINGS: { [oldName: string]: string } = {
   Cars: 'Cars and cisterns',
   'Cisterns with fuel': 'Cars and cisterns',
   'Mobile SRBM': 'MLRS',
   'MLRS Grad': 'MLRS',
   'BUK missile system': 'Anti-aircraft warfare',
+};
+
+const NAME_CODE_MAPPINGS: { [name: string]: string } = {
+  Tanks: 'tank',
+  'Armored fighting vehicle': 'armored_fighting_vehicle',
+  'Artillery systems': 'artillery_system',
+  MLRS: 'mlrs',
+  'Anti-aircraft warfare': 'anti_aircraft',
+  Planes: 'plane',
+  Helicopters: 'helicopter',
+  UAV: 'uav',
+  'Cruise missiles': 'cruise_missile',
+  'Ships (boats)': 'ship',
+  Submarines: 'submarine',
+  'Cars and cisterns': 'cars_cisterns',
+  'Special equipment': 'special_equipment',
+  'Military personnel': 'personnel',
 };
 export class MODDataProcessor implements DataProcessor<ScrapResult<MODScrapData>, MODData> {
   private _createCasualtiesMap(casualties: Array<MODEntityLoss>): Map<string, MODEntityLoss> {
@@ -34,6 +51,10 @@ export class MODDataProcessor implements DataProcessor<ScrapResult<MODScrapData>
       casualtiesMap.set(previousDayEntity.name, previousDayEntity);
     });
     return casualtiesMap;
+  }
+
+  private _addCodeToCasualties(casualtyData: Array<MODEntityLoss>): Array<EntityLoss> {
+    return casualtyData.map((casualty) => ({ ...casualty, code: NAME_CODE_MAPPINGS[casualty.name] }));
   }
 
   private _mergeCasualtiesWithSimilarNames(casualtyData: Array<MODEntityLoss>): Array<MODEntityLoss> {
@@ -67,7 +88,7 @@ export class MODDataProcessor implements DataProcessor<ScrapResult<MODScrapData>
 
     processedDayResult.casualties = processedDayResult.casualties.map((casualtyInfo) => ({
       ...casualtyInfo,
-      name: NAME_MAPPINGS[casualtyInfo.name] || casualtyInfo.name,
+      name: LEGACY_NAME_MAPPINGS[casualtyInfo.name] || casualtyInfo.name,
     }));
     const existingCasualtyNamesSet = new Set(processedDayResult.casualties.map((casualtyInfo) => casualtyInfo.name));
     const missingCasualtyNames = CASUALTY_NAMES.filter((name) => !existingCasualtyNamesSet.has(name));
@@ -80,11 +101,13 @@ export class MODDataProcessor implements DataProcessor<ScrapResult<MODScrapData>
       };
     });
     const updatedCasualtiesWithAllFields = [...processedDayResult.casualties, ...missingCasualties];
+    const mergedCasualties = this._mergeCasualtiesWithSimilarNames(updatedCasualtiesWithAllFields);
+    const casualties = this._addCodeToCasualties(mergedCasualties);
 
     return {
       ...processedDayResult,
       date: new Date(dayResult.date),
-      casualties: this._mergeCasualtiesWithSimilarNames(updatedCasualtiesWithAllFields),
+      casualties,
     };
   }
 
