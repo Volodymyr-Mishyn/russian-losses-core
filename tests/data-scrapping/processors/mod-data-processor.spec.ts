@@ -5,7 +5,7 @@ import { MODDataProcessor } from 'src/data-scrapping/processors/mod-data-process
 
 describe('MODDataProcessor', () => {
   describe('process', () => {
-    it('should rename old names and merge their data', async () => {
+    it('should rename old names add codes and merge their data', async () => {
       const mockScrapResult: ScrapResult<MODScrapData> = {
         success: true,
         result: {
@@ -98,76 +98,57 @@ describe('MODDataProcessor', () => {
       const modDataProcessor = new MODDataProcessor();
       const processedData = await modDataProcessor.process(mockScrapResult);
       expect(processedData[0].date).toEqual(new Date('2023-01-01'));
+      console.log('----');
+      console.log(processedData[0].casualties);
       expect(processedData[0].casualties).toEqual([
+        { name: 'Tanks', total: 0, increment: 0, code: 'tank' },
         {
-          increment: 0,
-          name: 'Tanks',
-          total: 0,
-        },
-        {
-          increment: 0,
           name: 'Armored fighting vehicle',
           total: 0,
+          increment: 0,
+          code: 'armored_fighting_vehicle',
         },
         {
-          increment: 0,
           name: 'Artillery systems',
           total: 0,
-        },
-        {
           increment: 0,
-          name: 'MLRS',
-          total: 0,
+          code: 'artillery_system',
         },
+        { name: 'MLRS', total: 0, increment: 0, code: 'mlrs' },
         {
-          increment: 0,
           name: 'Anti-aircraft warfare',
           total: 0,
-        },
-        {
           increment: 0,
-          name: 'Planes',
-          total: 0,
+          code: 'anti_aircraft',
         },
+        { name: 'Planes', total: 0, increment: 0, code: 'plane' },
+        { name: 'Helicopters', total: 0, increment: 0, code: 'helicopter' },
+        { name: 'UAV', total: 0, increment: 0, code: 'uav' },
         {
-          increment: 0,
-          name: 'Helicopters',
-          total: 0,
-        },
-        {
-          increment: 0,
-          name: 'UAV',
-          total: 0,
-        },
-        {
-          increment: 0,
           name: 'Cruise missiles',
           total: 0,
-        },
-        {
           increment: 0,
-          name: 'Ships (boats)',
-          total: 0,
+          code: 'cruise_missile',
         },
+        { name: 'Ships (boats)', total: 0, increment: 0, code: 'ship' },
+        { name: 'Submarines', total: 0, increment: 0, code: 'submarine' },
         {
-          increment: 0,
-          name: 'Submarines',
-          total: 0,
-        },
-        {
-          increment: 3,
           name: 'Cars and cisterns',
           total: 8,
+          increment: 3,
+          code: 'cars_cisterns',
         },
         {
-          increment: 0,
           name: 'Special equipment',
           total: 0,
+          increment: 0,
+          code: 'special_equipment',
         },
         {
-          increment: 0,
           name: 'Military personnel',
           total: 0,
+          increment: 0,
+          code: 'personnel',
         },
       ]);
     });
@@ -319,6 +300,7 @@ describe('MODDataProcessor', () => {
         expect.arrayContaining([
           {
             name: 'Armored fighting vehicle',
+            code: 'armored_fighting_vehicle',
             total: 0,
             increment: 0,
           },
@@ -326,8 +308,8 @@ describe('MODDataProcessor', () => {
       );
       expect(secondDayData.casualties).toEqual(
         expect.arrayContaining([
-          { name: 'Tanks', total: 1, increment: 0 },
-          { name: 'Cars and cisterns', total: 5, increment: 0 },
+          { name: 'Tanks', code: 'tank', total: 1, increment: 0 },
+          { name: 'Cars and cisterns', code: 'cars_cisterns', total: 5, increment: 0 },
         ]),
       );
     });

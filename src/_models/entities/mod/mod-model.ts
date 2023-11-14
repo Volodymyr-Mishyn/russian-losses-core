@@ -1,5 +1,6 @@
 export interface EntityLoss {
   name: string;
+  code: string;
   total: number;
   increment: number;
 }
