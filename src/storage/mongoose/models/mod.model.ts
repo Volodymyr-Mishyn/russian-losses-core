@@ -13,6 +13,7 @@ const MODDaySchema = new Schema<MODDayDocument>(
     casualties: [
       {
         name: String,
+        code: String,
         total: Number,
         increment: Number,
       },
