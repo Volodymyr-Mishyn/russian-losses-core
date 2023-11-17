@@ -1,12 +1,12 @@
-export interface MODEntityLoss {
+export interface MoDScrapEntityLoss {
   name: string;
   total: number;
   increment: number;
 }
 
-export interface MODDayResult {
+export interface MoDScrapDayResult {
   date: string;
-  casualties: Array<MODEntityLoss>;
+  casualties: Array<MoDScrapEntityLoss>;
 }
 
-export type MODScrapData = Array<MODDayResult>;
+export type MoDScrapData = Array<MoDScrapDayResult>;

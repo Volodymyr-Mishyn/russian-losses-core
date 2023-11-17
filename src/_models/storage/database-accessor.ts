@@ -1,15 +1,15 @@
 import { DataSaver } from '../data-saver';
-import { DayResult, MODData } from '../entities/mod/mod-model';
+import { MoDDayResult, MoDData } from '../entities/mod/mod-model';
 import { EntityType, OryxSideLosses } from '../entities/oryx/oryx-model';
 
 export interface DatabaseAccessor {
-  getMODSaver(): DataSaver<MODData>;
+  getMoDSaver(): DataSaver<MoDData>;
   getOryxSaver(): DataSaver<OryxSideLosses>;
-  getIsMODDataPresent(): Promise<boolean>;
+  getIsMoDDataPresent(): Promise<boolean>;
   getIsOryxCountryDataPresent(countryName: string): Promise<boolean>;
-  getAllMODData(): Promise<MODData>;
-  getMODDataInRange(startDate: string, endDate: string): Promise<MODData>;
-  getMODDataForDay(startDate: string, endDate: string): Promise<DayResult | null>;
+  getAllMoDData(): Promise<MoDData>;
+  getMoDDataInRange(startDate: string, endDate: string): Promise<MoDData>;
+  getMoDDataForDay(startDate: string, endDate: string): Promise<MoDDayResult | null>;
   getAllOryxDataForCountry(countryName: string): Promise<OryxSideLosses>;
   getOryxDataForCountry(countryName: string): Promise<Omit<OryxSideLosses, 'entityTypes'>>;
   getOryxEntityTypesForCountry(countryName: string): Promise<Array<Omit<EntityType, 'entities'>>>;

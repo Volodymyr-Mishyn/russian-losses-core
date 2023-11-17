@@ -54,15 +54,20 @@ export class ProcessRunner extends EventEmitter {
     });
   }
 
-  private _setUpProcess() {
+  private _createDebugFile(uniqueKey: string): fs.WriteStream {
+    const date = new Date();
+    const outputFile = fs.createWriteStream(`./debug/${uniqueKey}(${date.toUTCString()}).txt`);
+    return outputFile;
+  }
+
+  private _setUpProcess(): void {
     const { runner, entryPath, flags, uniqueKey } = this._parameters;
     if (this._process) {
       console.log(`${entryPath} is already running.`);
       return;
     }
     this._process = spawn(runner, [entryPath, ...flags], { cwd: __dirname });
-    const outputFile = fs.createWriteStream(`./debug/${uniqueKey}.txt`);
-    this._process?.stdout?.pipe(outputFile);
+    this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
     this._process?.stdout?.setEncoding('utf8');
   }
 

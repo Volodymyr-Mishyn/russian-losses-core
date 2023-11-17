@@ -1,16 +1,15 @@
 import { Action } from 'src/_models/action';
 import { ScheduledScrapping } from 'src/_models/schedule/scheduled-scrapping';
 import { DataScrappingApp } from 'src/data-scrapping/data-scrapping.app';
-import { SchedulerFactory } from 'src/scheduler/scheduler-factory';
 
 jest.mock('src/_helpers/delay', () => ({
   delay: jest.fn(),
 }));
 
-const mockedMODAction = {
+const mockedMoDAction = {
   execute: jest.fn(),
 };
-const mockedMODRecentAction = {
+const mockedMoDRecentAction = {
   execute: jest.fn(),
 };
 const mockedRussianAction = {
@@ -23,8 +22,8 @@ jest.mock('src/data-scrapping/data-scrapping-facade', () => {
   return {
     DataScrappingFacade: jest.fn().mockImplementation(() => {
       return {
-        createScrapAllMODReportsAction: () => mockedMODAction,
-        createScrapRecentMODReportsAction: () => mockedMODRecentAction,
+        createScrapAllMoDReportsAction: () => mockedMoDAction,
+        createScrapRecentMoDReportsAction: () => mockedMoDRecentAction,
         createScrapRussianLossesOryxAction: () => mockedRussianAction,
         createScrapUkrainianLossesOryxAction: () => mockedUkrainianAction,
       };
@@ -37,7 +36,7 @@ describe('DataScrappingApp', () => {
 
   const mockProcessParameters: any = {};
 
-  const MODscheduler = {
+  const MoDScheduler = {
     scheduleExecution() {},
   };
   const russianScheduler = {
@@ -50,7 +49,7 @@ describe('DataScrappingApp', () => {
   const mockSchedulerFactory: any = {
     create: (schedule: any, action: Action) => {
       if (schedule.cronTime === '0') {
-        return MODscheduler;
+        return MoDScheduler;
       }
       if (schedule.cronTime === '1') {
         return russianScheduler;
@@ -62,7 +61,7 @@ describe('DataScrappingApp', () => {
   };
 
   const mockScheduledScrapping: ScheduledScrapping = {
-    MOD: {
+    MoD: {
       cronTime: '0',
       attempts: [],
       timezone: '',
@@ -93,9 +92,9 @@ describe('DataScrappingApp', () => {
   });
 
   describe('runInitial', () => {
-    it('should scrap all MOD data', async () => {
+    it('should scrap all MoD data', async () => {
       await dataScrappingApp.runInitial();
-      expect(mockedMODAction.execute).toHaveBeenCalled();
+      expect(mockedMoDAction.execute).toHaveBeenCalled();
     });
 
     it('should scrap Oryx russian data', async () => {
@@ -121,8 +120,8 @@ describe('DataScrappingApp', () => {
           mockScheduledScrapping,
         );
       });
-      it('should schedule scrapping recent MOD data', () => {
-        jest.spyOn(MODscheduler, 'scheduleExecution');
+      it('should schedule scrapping recent MoD data', () => {
+        jest.spyOn(MoDScheduler, 'scheduleExecution');
         dataScrappingApp.runScheduled();
         expect(mockSchedulerFactory.create).toHaveBeenCalledWith(
           {
@@ -130,9 +129,9 @@ describe('DataScrappingApp', () => {
             attempts: [],
             timezone: '',
           },
-          mockedMODRecentAction,
+          mockedMoDRecentAction,
         );
-        expect(MODscheduler.scheduleExecution).toHaveBeenCalledTimes(1);
+        expect(MoDScheduler.scheduleExecution).toHaveBeenCalledTimes(1);
       });
 
       it('should schedule scrapping Oryx russian data', () => {

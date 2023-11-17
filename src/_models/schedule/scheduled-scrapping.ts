@@ -5,5 +5,5 @@ export interface ScheduledScrapping {
     Russia: Schedule;
     Ukraine: Schedule;
   };
-  MOD: Schedule;
+  MoD: Schedule;
 }

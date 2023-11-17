@@ -1,7 +1,7 @@
-import { flattenMODData } from 'src/_helpers/mod-utils/mod-flattener';
-import { MODDataFlat } from 'src/_models/entities/mod/mod-model';
+import { flattenMoDData } from 'src/_helpers/mod-utils/mod-flattener';
+import { MoDDataFlat } from 'src/_models/entities/mod/mod-model';
 
-describe('flattenMODData', () => {
+describe('flattenMoDData', () => {
   const sampleData = [
     {
       date: new Date('2023-11-10T00:00:00.000Z'),
@@ -13,7 +13,7 @@ describe('flattenMODData', () => {
   ];
 
   it('should flatten an array of day results', () => {
-    const expectedFlatData: MODDataFlat = [
+    const expectedFlatData: MoDDataFlat = [
       {
         date: sampleData[0].date,
         data: {
@@ -23,7 +23,7 @@ describe('flattenMODData', () => {
       },
     ];
 
-    const flattenedData = flattenMODData(sampleData);
+    const flattenedData = flattenMoDData(sampleData);
 
     expect(flattenedData).toEqual(expectedFlatData);
   });

@@ -1,8 +1,14 @@
-import { DayResult, DayResultFlat, EntityLossFlat, MODData, MODDataFlat } from '../../_models/entities/mod/mod-model';
+import {
+  MoDDayResult,
+  MoDDayResultFlat,
+  MoDEntityLossFlat,
+  MoDData,
+  MoDDataFlat,
+} from '../../_models/entities/mod/mod-model';
 
-function flattenDayResult(dayResult: DayResult): DayResultFlat {
+function flattenDayResult(dayResult: MoDDayResult): MoDDayResultFlat {
   const { date, casualties } = dayResult;
-  const flattenedCasualties: { [casualtyCode: string]: EntityLossFlat } = {};
+  const flattenedCasualties: { [casualtyCode: string]: MoDEntityLossFlat } = {};
 
   casualties.forEach((casualty) => {
     flattenedCasualties[casualty.code] = {
@@ -18,6 +24,6 @@ function flattenDayResult(dayResult: DayResult): DayResultFlat {
   };
 }
 
-export function flattenMODData(data: MODData): MODDataFlat {
+export function flattenMoDData(data: MoDData): MoDDataFlat {
   return data.map(flattenDayResult);
 }

@@ -1,5 +1,5 @@
 export enum SourceTypes {
-  MOD = 'mod',
+  MoD = 'mod',
   ORYX = 'oryx',
 }
 export enum OutputTypes {
@@ -25,6 +25,6 @@ export interface OryxScrappingParameters extends ScrappingParameters {
   subType: OryxTypes;
 }
 
-export interface MODScrappingParameters extends ScrappingParameters {
+export interface MoDScrappingParameters extends ScrappingParameters {
   full: boolean;
 }

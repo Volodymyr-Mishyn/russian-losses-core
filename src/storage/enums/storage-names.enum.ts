@@ -1,4 +1,4 @@
 export enum StorageNames {
   ORYX = 'oryx-data',
-  MOD = 'ministry-of-defense-data',
+  MoD = 'ministry-of-defense-data',
 }

@@ -7,7 +7,7 @@ export function createDataRoutes(databaseAccessor: DatabaseAccessor) {
   const dataController = new DataController(databaseAccessor);
   const router = Router();
   router.get(`/mod`, (request: Request, response: Response) => {
-    return dataController.getMODData(request, response);
+    return dataController.getMoDData(request, response);
   });
   router.get(`/oryx`, (request: Request, response: Response) => {
     return dataController.getOryxCountryData(request, response);
