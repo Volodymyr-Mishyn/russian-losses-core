@@ -121,7 +121,7 @@ describe('MoDDataProcessor', () => {
           data: [
             {
               date: '2023-09-13T00:00:00.000Z',
-              casualties: [{ name: 'Tanks', total: 4584, increment: -2 }],
+              casualties: [],
             },
           ],
         },
@@ -130,6 +130,34 @@ describe('MoDDataProcessor', () => {
       const processedData = await modDataProcessor.process(mockScrapResult);
       const dayData = processedData[0];
       expect(dayData.dayOfInvasion).toEqual(566);
+    });
+
+    it('should fix data for increments of first day of invasion', async () => {
+      const mockScrapResult: ScrapResult<MoDScrapData> = {
+        success: true,
+        result: {
+          date: '2023-01-01',
+          type: SourceTypes.MoD,
+          data: [
+            {
+              date: '2022-02-24T00:00:00.000Z',
+              casualties: [
+                { name: 'Planes', total: 7, increment: 0 },
+                { name: 'Helicopters', total: 7, increment: 0 },
+              ],
+            },
+          ],
+        },
+      };
+      const modDataProcessor = new MoDDataProcessor(true);
+      const processedData = await modDataProcessor.process(mockScrapResult);
+      const dayData = processedData[0];
+      expect(dayData.casualties).toEqual(
+        expect.arrayContaining([
+          { name: 'Planes', code: 'plane', total: 7, increment: 7 },
+          { name: 'Helicopters', code: 'helicopter', total: 7, increment: 7 },
+        ]),
+      );
     });
     it('should fill data from previous day if present', async () => {
       const mockScrapResult: ScrapResult<MoDScrapData> = {

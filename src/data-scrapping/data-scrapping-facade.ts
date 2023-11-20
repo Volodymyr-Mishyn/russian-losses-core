@@ -41,7 +41,7 @@ export class DataScrappingFacade {
       uniqueKey: modUniqueString,
     };
     const processMoD = new ProcessRunner(processMoDParams);
-    const scrapMoDDataAction = new ScrapDataAction(processMoD, new MoDDataProcessor(), this._modSaver);
+    const scrapMoDDataAction = new ScrapDataAction(processMoD, new MoDDataProcessor(true), this._modSaver);
     return scrapMoDDataAction;
   }
 

@@ -6,7 +6,12 @@ import {
 } from '../../_models/scrapping/scrap-results/mod-scrap-data';
 import { ScrapResult } from '../../_models/scrapping/scrap-results/scrap-result';
 import { MoDDayResult, MoDEntityLoss, MoDData } from '../../_models/entities/mod/mod-model';
-import { DATE_OF_INVASION_INSTANCE } from '../../_constants/russian-invasion-date';
+import {
+  DATE_OF_INVASION,
+  DATE_OF_INVASION_INSTANCE,
+  MONTH_OF_INVASION,
+  YEAR_OF_INVASION,
+} from '../../_constants/russian-invasion-date';
 
 const CASUALTY_NAMES = [
   'Tanks',
@@ -51,6 +56,7 @@ const NAME_CODE_MAPPINGS: { [name: string]: string } = {
 };
 const MS_TO_DAYS = 1000 * 60 * 60 * 24;
 export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>, MoDData> {
+  constructor(private _initialProcessing = false) {}
   private _calculateDayOfInvasion(date: Date): number {
     const timeDifference = date.getTime() - DATE_OF_INVASION_INSTANCE.getTime();
     return Math.floor(timeDifference / MS_TO_DAYS);
@@ -70,6 +76,26 @@ export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>
       dayDataMap.set(dayData.date.toISOString(), dayData);
     });
     return dayDataMap;
+  }
+
+  private _fixIncrementsForFirstDay(dayData: MoDDayResult): MoDDayResult {
+    const date = dayData.date;
+    if (
+      date.getDate() !== DATE_OF_INVASION ||
+      date.getMonth() !== MONTH_OF_INVASION ||
+      date.getFullYear() !== YEAR_OF_INVASION
+    ) {
+      return dayData;
+    }
+    return {
+      ...dayData,
+      casualties: dayData.casualties.map((casualty) => {
+        if (casualty.total > 0 && casualty.increment === 0) {
+          return { ...casualty, increment: casualty.total };
+        }
+        return casualty;
+      }),
+    };
   }
 
   private _addAdditionalDataToCasualties(casualtyData: Array<MoDScrapEntityLoss>): Array<MoDEntityLoss> {
@@ -173,6 +199,8 @@ export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>
       const previousDayData = dayDataMap.get(oneDayBefore.toISOString());
       if (previousDayData) {
         return this._updateDayWithPreviousDay(currentDayData, previousDayData);
+      } else if (this._initialProcessing) {
+        return this._fixIncrementsForFirstDay(currentDayData);
       }
       return currentDayData;
     });
