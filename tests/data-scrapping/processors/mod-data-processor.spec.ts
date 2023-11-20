@@ -74,7 +74,7 @@ describe('MoDDataProcessor', () => {
           name: 'Cars and cisterns',
           total: 8,
           increment: 3,
-          code: 'cars_cisterns',
+          code: 'car_cistern',
         },
         {
           name: 'Special equipment',

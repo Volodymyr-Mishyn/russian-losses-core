@@ -12,48 +12,8 @@ import {
   MONTH_OF_INVASION,
   YEAR_OF_INVASION,
 } from '../../_constants/russian-invasion-date';
+import { CASUALTY_NAMES, LEGACY_NAME_MAPPINGS, NAME_CODE_MAPPINGS } from '../../_constants/mod-names';
 
-const CASUALTY_NAMES = [
-  'Tanks',
-  'Armored fighting vehicle',
-  'Artillery systems',
-  'MLRS',
-  'Anti-aircraft warfare',
-  'Planes',
-  'Helicopters',
-  'UAV',
-  'Cruise missiles',
-  'Ships (boats)',
-  'Submarines',
-  'Cars and cisterns',
-  'Special equipment',
-  'Military personnel',
-];
-
-const LEGACY_NAME_MAPPINGS: { [oldName: string]: string } = {
-  Cars: 'Cars and cisterns',
-  'Cisterns with fuel': 'Cars and cisterns',
-  'Mobile SRBM': 'MLRS',
-  'MLRS Grad': 'MLRS',
-  'BUK missile system': 'Anti-aircraft warfare',
-};
-
-const NAME_CODE_MAPPINGS: { [name: string]: string } = {
-  Tanks: 'tank',
-  'Armored fighting vehicle': 'armored_fighting_vehicle',
-  'Artillery systems': 'artillery_system',
-  MLRS: 'mlrs',
-  'Anti-aircraft warfare': 'anti_aircraft',
-  Planes: 'plane',
-  Helicopters: 'helicopter',
-  UAV: 'uav',
-  'Cruise missiles': 'cruise_missile',
-  'Ships (boats)': 'ship',
-  Submarines: 'submarine',
-  'Cars and cisterns': 'cars_cisterns',
-  'Special equipment': 'special_equipment',
-  'Military personnel': 'personnel',
-};
 const MS_TO_DAYS = 1000 * 60 * 60 * 24;
 export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>, MoDData> {
   constructor(private _initialProcessing = false) {}
