@@ -1,11 +1,11 @@
 import { DataSaver } from '../_models/data-saver';
 import { OryxTypes, OutputTypes } from '../_models/scrapping/scrapping-parameters';
-import { MODScrappingParametersImpl } from './parameters/mod-scrapping-parameters';
-import { MODData } from '../_models/entities/mod/mod-model';
+import { MoDScrappingParametersImpl } from './parameters/mod-scrapping-parameters';
+import { MoDData } from '../_models/entities/mod/mod-model';
 import { ProcessBaseParameters, ProcessParameters, RunnerType } from '../_models/process/process-parameters';
 import { ProcessRunner } from '../process/process-runner';
 import { ScrapDataAction } from './actions/scrap-data.action';
-import { MODDataProcessor } from './processors/mod-data-processor';
+import { MoDDataProcessor } from './processors/mod-data-processor';
 import { Action } from '../_models/action';
 import { OryxSideLosses } from '../_models/entities/oryx/oryx-model';
 import { OryxScrappingParametersImpl } from './parameters/oryx-scrapping-parameters';
@@ -15,7 +15,7 @@ import { DatabaseAccessor } from '../_models/storage/database-accessor';
 export class DataScrappingFacade {
   private _scriptPath!: string;
   private _scriptRunner!: RunnerType;
-  private _modSaver!: DataSaver<MODData>;
+  private _modSaver!: DataSaver<MoDData>;
   private _oryxSaver!: DataSaver<OryxSideLosses>;
   constructor(
     private _processParameters: ProcessBaseParameters,
@@ -24,41 +24,41 @@ export class DataScrappingFacade {
     const { runner, entryPath } = this._processParameters;
     this._scriptPath = entryPath;
     this._scriptRunner = runner;
-    this._modSaver = this._databaseAccessor.getMODSaver();
+    this._modSaver = this._databaseAccessor.getMoDSaver();
     this._oryxSaver = this._databaseAccessor.getOryxSaver();
   }
 
-  public createScrapAllMODReportsAction(): Action {
-    const modUniqueString = `MOD-${Date.now().toString()}`;
-    const modParameters = new MODScrappingParametersImpl();
+  public createScrapAllMoDReportsAction(): Action {
+    const modUniqueString = `MoD-${Date.now().toString()}`;
+    const modParameters = new MoDScrappingParametersImpl();
     modParameters.outputType = OutputTypes.PROCESS;
     modParameters.outputPath = modUniqueString;
     modParameters.full = true;
-    const processMODParams: ProcessParameters = {
+    const processMoDParams: ProcessParameters = {
       entryPath: this._scriptPath,
       flags: modParameters.getParameters(),
       runner: this._scriptRunner,
       uniqueKey: modUniqueString,
     };
-    const processMOD = new ProcessRunner(processMODParams);
-    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), this._modSaver);
-    return scrapMODDataAction;
+    const processMoD = new ProcessRunner(processMoDParams);
+    const scrapMoDDataAction = new ScrapDataAction(processMoD, new MoDDataProcessor(true), this._modSaver);
+    return scrapMoDDataAction;
   }
 
-  public createScrapRecentMODReportsAction(): Action {
-    const modUniqueString = `MOD-${Date.now().toString()}`;
-    const modParameters = new MODScrappingParametersImpl();
+  public createScrapRecentMoDReportsAction(): Action {
+    const modUniqueString = `MoD-${Date.now().toString()}`;
+    const modParameters = new MoDScrappingParametersImpl();
     modParameters.outputType = OutputTypes.PROCESS;
     modParameters.outputPath = modUniqueString;
-    const processMODParams: ProcessParameters = {
+    const processMoDParams: ProcessParameters = {
       entryPath: this._scriptPath,
       flags: modParameters.getParameters(),
       runner: this._scriptRunner,
       uniqueKey: modUniqueString,
     };
-    const processMOD = new ProcessRunner(processMODParams);
-    const scrapMODDataAction = new ScrapDataAction(processMOD, new MODDataProcessor(), this._modSaver);
-    return scrapMODDataAction;
+    const processMoD = new ProcessRunner(processMoDParams);
+    const scrapMoDDataAction = new ScrapDataAction(processMoD, new MoDDataProcessor(), this._modSaver);
+    return scrapMoDDataAction;
   }
 
   public createScrapRussianLossesOryxAction(): Action {

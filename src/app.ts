@@ -26,7 +26,7 @@ export class Application {
   }
 
   private async _isDataAlreadyPresent() {
-    const modDataPresent = await this._dataBaseAccessor.getIsMODDataPresent();
+    const modDataPresent = await this._dataBaseAccessor.getIsMoDDataPresent();
     const russiaOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('russia');
     const ukraineOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('Ukraine');
     return modDataPresent && russiaOryxDataPresent && ukraineOryxDataPresent;

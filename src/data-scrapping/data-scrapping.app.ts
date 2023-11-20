@@ -17,8 +17,8 @@ export class DataScrappingApp {
   }
 
   public async runInitial() {
-    const scrapAllMODAction = this._dataScrappingFacade.createScrapAllMODReportsAction();
-    await scrapAllMODAction.execute();
+    const scrapAllMoDAction = this._dataScrappingFacade.createScrapAllMoDReportsAction();
+    await scrapAllMoDAction.execute();
     await delay(10000);
     const scrapOryxRussiaAction = this._dataScrappingFacade.createScrapRussianLossesOryxAction();
     await scrapOryxRussiaAction.execute();
@@ -31,10 +31,10 @@ export class DataScrappingApp {
     if (!this._schedulerFactory || !this._scheduledScrapping) {
       throw new Error('Scheduler not available');
     }
-    const scrapRecentMODAction = this._dataScrappingFacade.createScrapRecentMODReportsAction();
-    const MODSchedule = this._scheduledScrapping.MOD;
-    const MODScheduler = this._schedulerFactory.create(MODSchedule, scrapRecentMODAction);
-    MODScheduler.scheduleExecution();
+    const scrapRecentMoDAction = this._dataScrappingFacade.createScrapRecentMoDReportsAction();
+    const MoDSchedule = this._scheduledScrapping.MoD;
+    const MoDScheduler = this._schedulerFactory.create(MoDSchedule, scrapRecentMoDAction);
+    MoDScheduler.scheduleExecution();
     const { Russia: russianLossesSchedule, Ukraine: ukrainianLossesSchedule } = this._scheduledScrapping.Oryx;
     const scrapOryxRussiaAction = this._dataScrappingFacade.createScrapRussianLossesOryxAction();
     const russianLossesScheduler = this._schedulerFactory.create(russianLossesSchedule, scrapOryxRussiaAction);

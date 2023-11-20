@@ -1,28 +1,31 @@
-export interface EntityLoss {
+export interface MoDEntityLoss {
   name: string;
   code: string;
   total: number;
   increment: number;
+  correction?: boolean;
 }
 
-export interface DayResult {
+export interface MoDDayResult {
   date: Date;
-  casualties: Array<EntityLoss>;
+  dayOfInvasion: number;
+  casualties: Array<MoDEntityLoss>;
 }
 
-export type MODData = Array<DayResult>;
+export type MoDData = Array<MoDDayResult>;
 
-export interface EntityLossFlat {
+export interface MoDEntityLossFlat {
   name: string;
   total: number;
   increment: number;
 }
 
-export interface DayResultFlat {
+export interface MoDDayResultFlat {
   date: Date;
+  dayOfInvasion: number;
   data: {
-    [casualtyCode: string]: EntityLossFlat;
+    [casualtyCode: string]: MoDEntityLossFlat;
   };
 }
 
-export type MODDataFlat = Array<DayResultFlat>;
+export type MoDDataFlat = Array<MoDDayResultFlat>;

@@ -12,22 +12,22 @@ describe('DataScrappingFacade', () => {
     };
 
     mockDatabaseAccessor = {
-      getMODSaver: jest.fn(),
+      getMoDSaver: jest.fn(),
       getOryxSaver: jest.fn(),
     };
 
     dataScrappingFacade = new DataScrappingFacade(mockProcessParameters, mockDatabaseAccessor);
   });
 
-  describe('createScrapAllMODReportsAction', () => {
+  describe('createScrapAllMoDReportsAction', () => {
     it('should create specific action', () => {
-      const action = dataScrappingFacade.createScrapAllMODReportsAction();
+      const action = dataScrappingFacade.createScrapAllMoDReportsAction();
       expect(action).toBeTruthy();
     });
   });
-  describe('createScrapRecentMODReportsAction', () => {
+  describe('createScrapRecentMoDReportsAction', () => {
     it('should create specific action', () => {
-      const action = dataScrappingFacade.createScrapRecentMODReportsAction();
+      const action = dataScrappingFacade.createScrapRecentMoDReportsAction();
       expect(action).toBeTruthy();
     });
   });

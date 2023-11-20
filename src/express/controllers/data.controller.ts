@@ -1,23 +1,24 @@
 import { Request, Response } from 'express';
 import { DatabaseAccessor } from '../../_models/storage/database-accessor';
-import { MODData } from '../../_models/entities/mod/mod-model';
-import { flattenMODData } from '../../_helpers/mod-utils/mod-flattener';
+import { MoDData } from '../../_models/entities/mod/mod-model';
+import { flattenMoDData } from '../../_helpers/mod-utils/mod-flattener';
 
 export class DataController {
   constructor(private _dataBaseAccessor: DatabaseAccessor) {}
 
-  public async getMODData(request: Request, response: Response) {
+  public async getMoDData(request: Request, response: Response) {
     const { start, end, flat } = request.query;
     try {
-      let data: MODData;
+      let data: MoDData;
       if (start && end) {
-        data = await this._dataBaseAccessor.getMODDataInRange(`${start}`, `${end}`);
+        data = await this._dataBaseAccessor.getMoDDataInRange(`${start}`, `${end}`);
       } else {
-        data = await this._dataBaseAccessor.getAllMODData();
+        data = await this._dataBaseAccessor.getAllMoDData();
       }
-      const responseData = flat ? flattenMODData(data) : data;
+      const responseData = flat ? flattenMoDData(data) : data;
       response.send(responseData);
     } catch (error) {
+      console.error('Error: ', error);
       response.status(500).send();
     }
   }
@@ -29,8 +30,8 @@ export class DataController {
       return;
     }
     try {
-      const allMODData = await this._dataBaseAccessor.getAllOryxDataForCountry(`${country}`);
-      response.send(allMODData);
+      const allMoDData = await this._dataBaseAccessor.getAllOryxDataForCountry(`${country}`);
+      response.send(allMoDData);
     } catch (error) {
       response.status(500).send();
     }

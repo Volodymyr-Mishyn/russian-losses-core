@@ -5,6 +5,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "test": "npx jest",
+    "prod": "ts-node -P ./tsconfig.json ./src/index.ts",
     "dev": "ts-node -P ./tsconfig.json ./src/index.ts",
     "dev:reload": "nodemon"
   },

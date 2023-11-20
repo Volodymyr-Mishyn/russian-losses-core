@@ -1,8 +1,8 @@
-import { MODScrappingParameters, SourceTypes } from '../../_models/scrapping/scrapping-parameters';
+import { MoDScrappingParameters, SourceTypes } from '../../_models/scrapping/scrapping-parameters';
 import { ScrappingParametersImpl } from './scrapping-parameters';
 
-export class MODScrappingParametersImpl extends ScrappingParametersImpl implements MODScrappingParameters {
-  protected sourceType = SourceTypes.MOD;
+export class MoDScrappingParametersImpl extends ScrappingParametersImpl implements MoDScrappingParameters {
+  protected sourceType = SourceTypes.MoD;
   private _full = false;
   get full(): boolean {
     return this._full;

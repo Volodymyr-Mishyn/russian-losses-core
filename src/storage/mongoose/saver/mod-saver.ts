@@ -1,28 +1,28 @@
 import { Model } from 'mongoose';
-import { MODData } from '../../../_models/entities/mod/mod-model';
-import { MODModel } from '../models/mod.model';
+import { MoDData } from '../../../_models/entities/mod/mod-model';
+import { MoDModel } from '../models/mod.model';
 import { MongooseSaver } from './mongoose-saver';
-import { MODDayDocument } from '../documents/mod/mod.document';
+import { MoDDayDocument } from '../documents/mod/mod.document';
 
-export class MODSaver extends MongooseSaver<MODData> {
-  constructor(private _MODModel: Model<MODDayDocument> = MODModel) {
+export class MoDSaver extends MongooseSaver<MoDData> {
+  constructor(private _MoDModel: Model<MoDDayDocument> = MoDModel) {
     super();
   }
 
-  private async _saveMODData(data: MODData): Promise<void> {
+  private async _saveMoDData(data: MoDData): Promise<void> {
     for (const singleDayData of data) {
-      const alreadyPresent = await this._MODModel.findOne({ date: singleDayData.date });
+      const alreadyPresent = await this._MoDModel.findOne({ date: singleDayData.date });
       if (alreadyPresent) {
         alreadyPresent.casualties = singleDayData.casualties;
         await alreadyPresent.save();
       } else {
-        const newData = new this._MODModel(singleDayData);
+        const newData = new this._MoDModel(singleDayData);
         await newData.save();
       }
     }
   }
 
-  protected async innerSave(data: MODData): Promise<void> {
-    await this._saveMODData(data);
+  protected async innerSave(data: MoDData): Promise<void> {
+    await this._saveMoDData(data);
   }
 }

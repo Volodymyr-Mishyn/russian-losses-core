@@ -1,13 +1,17 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { MODDayDocument } from '../documents/mod/mod.document';
+import { MoDDayDocument } from '../documents/mod/mod.document';
 import { StorageNames } from '../../enums/storage-names.enum';
 
-export interface MODDayModelModel extends Model<MODDayDocument> {}
+export interface MoDDayModelModel extends Model<MoDDayDocument> {}
 
-const MODDaySchema = new Schema<MODDayDocument>(
+const MoDDaySchema = new Schema<MoDDayDocument>(
   {
     date: {
       type: Date,
+      required: true,
+    },
+    dayOfInvasion: {
+      type: Number,
       required: true,
     },
     casualties: [
@@ -16,6 +20,7 @@ const MODDaySchema = new Schema<MODDayDocument>(
         code: String,
         total: Number,
         increment: Number,
+        correction: Boolean,
       },
     ],
     createdAt: {
@@ -30,13 +35,13 @@ const MODDaySchema = new Schema<MODDayDocument>(
   },
   {
     autoCreate: true,
-    collection: StorageNames.MOD,
+    collection: StorageNames.MoD,
   },
 );
 
-MODDaySchema.pre('save', function (next) {
+MoDDaySchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-export const MODModel = mongoose.model<MODDayDocument>('MinistryOfDefenseStatistics', MODDaySchema);
+export const MoDModel = mongoose.model<MoDDayDocument>('MinistryOfDefenseStatistics', MoDDaySchema);
