@@ -10,12 +10,17 @@ const MoDDaySchema = new Schema<MoDDayDocument>(
       type: Date,
       required: true,
     },
+    dayOfInvasion: {
+      type: Number,
+      required: true,
+    },
     casualties: [
       {
         name: String,
         code: String,
         total: Number,
         increment: Number,
+        correction: Boolean,
       },
     ],
     createdAt: {

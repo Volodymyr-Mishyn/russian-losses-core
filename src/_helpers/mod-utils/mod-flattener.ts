@@ -20,6 +20,7 @@ function flattenDayResult(dayResult: MoDDayResult): MoDDayResultFlat {
 
   return {
     date,
+    dayOfInvasion: dayResult.dayOfInvasion,
     data: flattenedCasualties,
   };
 }

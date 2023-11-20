@@ -3,10 +3,12 @@ export interface MoDEntityLoss {
   code: string;
   total: number;
   increment: number;
+  correction?: boolean;
 }
 
 export interface MoDDayResult {
   date: Date;
+  dayOfInvasion: number;
   casualties: Array<MoDEntityLoss>;
 }
 
@@ -20,6 +22,7 @@ export interface MoDEntityLossFlat {
 
 export interface MoDDayResultFlat {
   date: Date;
+  dayOfInvasion: number;
   data: {
     [casualtyCode: string]: MoDEntityLossFlat;
   };

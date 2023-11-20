@@ -6,6 +6,7 @@ import {
 } from '../../_models/scrapping/scrap-results/mod-scrap-data';
 import { ScrapResult } from '../../_models/scrapping/scrap-results/scrap-result';
 import { MoDDayResult, MoDEntityLoss, MoDData } from '../../_models/entities/mod/mod-model';
+import { DATE_OF_INVASION_INSTANCE } from '../../_constants/russian-invasion-date';
 
 const CASUALTY_NAMES = [
   'Tanks',
@@ -48,7 +49,13 @@ const NAME_CODE_MAPPINGS: { [name: string]: string } = {
   'Special equipment': 'special_equipment',
   'Military personnel': 'personnel',
 };
+const MS_TO_DAYS = 1000 * 60 * 60 * 24;
 export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>, MoDData> {
+  private _calculateDayOfInvasion(date: Date): number {
+    const timeDifference = date.getTime() - DATE_OF_INVASION_INSTANCE.getTime();
+    return Math.floor(timeDifference / MS_TO_DAYS);
+  }
+
   private _createCasualtiesMap(casualties: Array<MoDEntityLoss>): Map<string, MoDEntityLoss> {
     const casualtiesMap = new Map<string, MoDEntityLoss>();
     casualties.forEach((previousDayEntity) => {
@@ -65,8 +72,14 @@ export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>
     return dayDataMap;
   }
 
-  private _addCodeToCasualties(casualtyData: Array<MoDScrapEntityLoss>): Array<MoDEntityLoss> {
-    return casualtyData.map((casualty) => ({ ...casualty, code: NAME_CODE_MAPPINGS[casualty.name] }));
+  private _addAdditionalDataToCasualties(casualtyData: Array<MoDScrapEntityLoss>): Array<MoDEntityLoss> {
+    return casualtyData.map((casualty) => {
+      const updatedData: MoDEntityLoss = { ...casualty, code: NAME_CODE_MAPPINGS[casualty.name] };
+      if (casualty.increment < 0) {
+        updatedData.correction = true;
+      }
+      return updatedData;
+    });
   }
 
   private _mergeCasualtiesWithSimilarNames(casualtyData: Array<MoDScrapEntityLoss>): Array<MoDScrapEntityLoss> {
@@ -99,7 +112,7 @@ export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>
       const previousDayCasualtyData: MoDEntityLoss | null = previousDayData?.get(currentDayCasualtyData.name) || null;
       if (previousDayCasualtyData) {
         const actualIncrement = currentDayCasualtyData.total - previousDayCasualtyData.total;
-        if (actualIncrement < 0) {
+        if (actualIncrement < 0 && !currentDayCasualtyData.correction) {
           return {
             ...currentDayCasualtyData,
             total: previousDayCasualtyData.total,
@@ -139,12 +152,14 @@ export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>
       total: 0,
       increment: 0,
     }));
-    const casualties = this._addCodeToCasualties(
+    const casualties = this._addAdditionalDataToCasualties(
       this._mergeCasualtiesWithSimilarNames([...processedDayResult.casualties, ...missingCasualties]),
     );
+    const currentDate = new Date(dayResult.date);
     return {
       ...processedDayResult,
-      date: new Date(dayResult.date),
+      date: currentDate,
+      dayOfInvasion: this._calculateDayOfInvasion(currentDate),
       casualties,
     };
   }

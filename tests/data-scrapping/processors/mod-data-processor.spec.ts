@@ -90,6 +90,47 @@ describe('MoDDataProcessor', () => {
         },
       ]);
     });
+
+    it('should add codes and correction if needed', async () => {
+      const mockScrapResult: ScrapResult<MoDScrapData> = {
+        success: true,
+        result: {
+          date: '2023-01-01',
+          type: SourceTypes.MoD,
+          data: [
+            {
+              date: '2023-09-13T00:00:00.000Z',
+              casualties: [{ name: 'Tanks', total: 4584, increment: -2 }],
+            },
+          ],
+        },
+      };
+      const modDataProcessor = new MoDDataProcessor();
+      const processedData = await modDataProcessor.process(mockScrapResult);
+      const dayData = processedData[0];
+      expect(dayData.casualties).toEqual(
+        expect.arrayContaining([{ name: 'Tanks', code: 'tank', total: 4584, increment: -2, correction: true }]),
+      );
+    });
+    it('should calculate day of invasion number', async () => {
+      const mockScrapResult: ScrapResult<MoDScrapData> = {
+        success: true,
+        result: {
+          date: '2023-01-01',
+          type: SourceTypes.MoD,
+          data: [
+            {
+              date: '2023-09-13T00:00:00.000Z',
+              casualties: [{ name: 'Tanks', total: 4584, increment: -2 }],
+            },
+          ],
+        },
+      };
+      const modDataProcessor = new MoDDataProcessor();
+      const processedData = await modDataProcessor.process(mockScrapResult);
+      const dayData = processedData[0];
+      expect(dayData.dayOfInvasion).toEqual(566);
+    });
     it('should fill data from previous day if present', async () => {
       const mockScrapResult: ScrapResult<MoDScrapData> = {
         success: true,
@@ -171,7 +212,6 @@ describe('MoDDataProcessor', () => {
           { name: 'Tanks', code: 'tank', total: 4584, increment: 16 },
         ]),
       );
-      console.log(secondDayData.casualties);
       expect(secondDayData.casualties).toEqual(
         expect.arrayContaining([
           { name: 'Submarines', code: 'submarine', total: 1, increment: 1 },
