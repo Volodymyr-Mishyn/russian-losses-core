@@ -17,7 +17,7 @@ export class MongooseAccessor implements DatabaseAccessor {
   private _modSaver = new MoDSaver();
   private _oryxSaver = new OryxSaver();
 
-  private static modSelectionFields = '_id createdAt date casualties';
+  private static modSelectionFields = '_id createdAt date casualties dayOfInvasion';
 
   constructor(
     private _MoDModel: Model<MoDDayDocument> = MoDModel,
