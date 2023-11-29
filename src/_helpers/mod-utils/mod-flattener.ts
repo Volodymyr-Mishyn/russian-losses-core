@@ -7,7 +7,7 @@ import {
 } from '../../_models/entities/mod/mod-model';
 
 function flattenDayResult(dayResult: MoDDayResult): MoDDayResultFlat {
-  const { date, casualties } = dayResult;
+  const { date, casualties, dayOfInvasion } = dayResult;
   const flattenedCasualties: { [casualtyCode: string]: MoDEntityLossFlat } = {};
 
   casualties.forEach((casualty) => {
@@ -20,7 +20,7 @@ function flattenDayResult(dayResult: MoDDayResult): MoDDayResultFlat {
 
   return {
     date,
-    dayOfInvasion: dayResult.dayOfInvasion,
+    dayOfInvasion,
     data: flattenedCasualties,
   };
 }

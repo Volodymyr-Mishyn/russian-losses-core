@@ -9,13 +9,8 @@ import { delay } from '../../_helpers/delay';
 import { EntityModel, EntityType, OryxSideLosses } from '../../_models/entities/oryx/oryx-model';
 
 export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapData>, OryxSideLosses> {
-  async process(data: ScrapResult<OryxScrapData>): Promise<OryxSideLosses> {
-    await delay(500);
-    const { data: initialData, date } = data.result;
-    const { entities, name, statistics } = initialData;
-    const countryName = name.toUpperCase();
-    const processedEntitiesTypes = await this._processEntityTypes(entities, countryName);
-    return this._createOryxSideLosses(name, countryName, processedEntitiesTypes, date, statistics);
+  private _createCodeForName(name: string): string {
+    return name.toLowerCase().trim().replace(/\s+/g, '_');
   }
 
   private async _processEntityTypes(entities: OryxEntityType[], countryName: string): Promise<EntityType[]> {
@@ -24,6 +19,7 @@ export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapDat
       const processedEntities = await this._processSingleEntityType(entityType, countryName);
       const processedEntityType: EntityType = {
         ...entityType,
+        code: this._createCodeForName(entityType.name),
         countryName: countryName,
         entities: processedEntities,
       };
@@ -48,6 +44,7 @@ export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapDat
   ): Promise<EntityModel> {
     const processedEntity: EntityModel = {
       ...entity,
+      code: this._createCodeForName(entity.name),
       entityType,
       countryName,
     };
@@ -68,5 +65,14 @@ export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapDat
       date: new Date(date),
       statistics,
     };
+  }
+
+  public async process(data: ScrapResult<OryxScrapData>): Promise<OryxSideLosses> {
+    await delay(500);
+    const { data: initialData, date } = data.result;
+    const { entities, name, statistics } = initialData;
+    const countryName = name.toUpperCase();
+    const processedEntitiesTypes = await this._processEntityTypes(entities, countryName);
+    return this._createOryxSideLosses(name, countryName, processedEntitiesTypes, date, statistics);
   }
 }

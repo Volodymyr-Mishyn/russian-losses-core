@@ -14,11 +14,12 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   ) {
     super();
   }
+
   private async _insertEntities(entitiesData: Array<EntityModel>): Promise<Array<Types.ObjectId>> {
     const insertedEntityModels: Array<Types.ObjectId> = [];
     for (const entityData of entitiesData) {
-      const { name, countryName, entityType } = entityData;
-      const existingEntity = await this._oryxEntityModelModel.findOne({ name, countryName, entityType });
+      const { code, countryName, entityType } = entityData;
+      const existingEntity = await this._oryxEntityModelModel.findOne({ code, countryName, entityType });
       if (existingEntity) {
         const { count, abandoned, captured, damaged, destroyed, damagedAndCaptured, damagedAndAbandoned } = entityData;
         existingEntity.count = count;
@@ -42,10 +43,10 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private async _insertEntityTypes(entityTypesData: Array<EntityType>): Promise<Array<Types.ObjectId>> {
     const insertedEntityTypeModels = [];
     for (const entityTypeData of entityTypesData) {
-      const { name, countryName, entities } = entityTypeData;
+      const { code, countryName, entities } = entityTypeData;
       const savedEntities = await this._insertEntities(entities);
       const savedEntitiesSet = new Set([...savedEntities]);
-      const existingEntityType = await this._oryxEntityTypeModel.findOne({ name, countryName });
+      const existingEntityType = await this._oryxEntityTypeModel.findOne({ code, countryName });
       if (existingEntityType) {
         const { statistics } = entityTypeData;
         existingEntityType.statistics = statistics;

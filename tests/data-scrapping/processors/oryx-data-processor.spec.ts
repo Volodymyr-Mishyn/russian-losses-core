@@ -117,9 +117,11 @@ describe('OryxDataProcessor', () => {
                 },
                 entityType: 'Tanks',
                 name: 'some tank',
+                code: 'some_tank',
               },
             ],
             name: 'Tanks',
+            code: 'tanks',
             statistics: {
               abandoned: 1,
               captured: 1,

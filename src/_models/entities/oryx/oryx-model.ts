@@ -14,6 +14,7 @@ export interface EntityStatusInfo {
 export interface EntityModel {
   //t-90
   name: string;
+  code: string;
   count: number;
   description?: string;
   image?: string;
@@ -30,6 +31,7 @@ export interface EntityModel {
 export interface EntityType {
   //tanks
   name: string;
+  code: string;
   countryName: string;
   description?: string;
   image?: string;
