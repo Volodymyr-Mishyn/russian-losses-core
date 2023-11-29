@@ -7,6 +7,7 @@ import { OryxSideLossesDocument } from '../documents/oryx/oryx-side-losses.docum
 const OryxEntityModelSchema = new Schema<OryxEntityModelDocument>(
   {
     name: { type: String, required: true },
+    code: { type: String, required: true },
     count: Number,
     description: String,
     image: String,
@@ -61,6 +62,7 @@ export const OryxEntityModelModel = mongoose.model<OryxEntityModelDocument>('Ory
 const OryxEntityTypeSchema = new Schema<OryxEntityTypeDocument>(
   {
     name: { type: String, required: true },
+    code: { type: String, required: true },
     countryName: { type: String, required: true },
     description: String,
     image: String,
