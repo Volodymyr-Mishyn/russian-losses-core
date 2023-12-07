@@ -2,6 +2,7 @@ import { ProcessRunner } from '../../process/process-runner';
 import { Action, ActionExecutionResult } from '../../_models/action';
 import { DataProcessor } from '../../_models/data-processor';
 import { DataSaver } from '../../_models/data-saver';
+import { Logger } from '../../_helpers/logger';
 
 export class ScrapDataAction implements Action {
   constructor(
@@ -14,7 +15,7 @@ export class ScrapDataAction implements Action {
       this._processRunner.run();
       const receivedData = await new Promise((resolve) => {
         this._processRunner.once('data', (data) => {
-          console.log('\x1b[36m%s\x1b[0m', 'Data parsed successfully');
+          Logger.log('Data parsed successfully', '\x1b[36m');
           resolve(data);
         });
       });
@@ -24,7 +25,7 @@ export class ScrapDataAction implements Action {
         status: true,
       };
     } catch (e) {
-      console.log((e as any).message);
+      Logger.log(`ERROR! : ${(e as any).message}`);
       return {
         status: false,
       };

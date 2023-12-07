@@ -1,3 +1,4 @@
+import { Logger } from '../../../_helpers/logger';
 import { DataSaver } from '../../../_models/data-saver';
 import { EstablishedDatabaseConnection } from '../mongoose-connector.decorator';
 export abstract class MongooseSaver<D> implements DataSaver<D> {
@@ -7,7 +8,7 @@ export abstract class MongooseSaver<D> implements DataSaver<D> {
     try {
       await this.innerSave(data);
     } catch (e) {
-      console.log((e as any).message);
+      Logger.log(`Mongoose Saver (ERROR): ${(e as any).message}`, '\x1b[32m');
     }
     return true;
   }

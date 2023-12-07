@@ -1,3 +1,4 @@
+import { Logger } from '../_helpers/logger';
 import { Action } from '../_models/action';
 import { Schedule } from '../_models/schedule/schedule';
 import { CronJob } from 'cron';
@@ -58,7 +59,7 @@ export class Scheduler {
       timeZone: this._scheduleConfig.timezone,
     });
     const infoString = `Execution scheduled on ${job.nextDate()}`;
-    console.log('\x1b[30m%s\x1b[0m', infoString);
+    Logger.log(`Scheduler: ${infoString}`, '\x1b[30m');
     job.start();
   }
 

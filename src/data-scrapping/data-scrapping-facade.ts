@@ -73,7 +73,6 @@ export class DataScrappingFacade {
       runner: this._scriptRunner,
       uniqueKey: oryxRussiaUniqueString,
     };
-    console.log(oryxRussianParameters.getParameters());
     const processOryxRussia = new ProcessRunner(processOryxRussiaParams);
     const scrapOryxRussiaDataAction = new ScrapDataAction(processOryxRussia, new OryxDataProcessor(), this._oryxSaver);
     return scrapOryxRussiaDataAction;
@@ -91,7 +90,6 @@ export class DataScrappingFacade {
       runner: this._scriptRunner,
       uniqueKey: oryxUkraineUniqueString,
     };
-    console.log(oryxUkrainianParameters.getParameters());
     const processOryxUkraine = new ProcessRunner(processOryxUkraineParams);
     const scrapOryxUkraineDataAction = new ScrapDataAction(
       processOryxUkraine,

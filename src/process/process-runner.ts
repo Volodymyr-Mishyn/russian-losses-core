@@ -2,6 +2,7 @@ import { spawn, ChildProcess } from 'child_process';
 import { ProcessParameters } from '../_models/process/process-parameters';
 import * as fs from 'fs';
 import EventEmitter from 'events';
+import { Logger } from '../_helpers/logger';
 
 export class ProcessRunner extends EventEmitter {
   private _process: ChildProcess | null = null;
@@ -40,17 +41,17 @@ export class ProcessRunner extends EventEmitter {
         filteredResponse = '';
         this.stop();
       } catch (error) {
-        console.log('Error parsing JSON:', (error as any).message);
+        Logger.log(`Process Runner (ERROR): Error parsing JSON '${(error as any).message}'`);
       }
     });
 
     this._process.on('exit', (code) => {
-      console.log(`${entryPath} exited with code ${code}`);
+      Logger.log(`Process Runner: ${entryPath} exited with code ${code}`);
       this._process = null;
     });
 
     this._process.on('error', (err) => {
-      console.error('Error:', err);
+      Logger.log(`Process Runner (ERROR): process error '${err}'`);
     });
   }
 
@@ -63,7 +64,7 @@ export class ProcessRunner extends EventEmitter {
   private _setUpProcess(): void {
     const { runner, entryPath, flags, uniqueKey } = this._parameters;
     if (this._process) {
-      console.log(`${entryPath} is already running.`);
+      Logger.log(`Process Runner (ERROR): ${entryPath} is already running.`);
       return;
     }
     this._process = spawn(runner, [entryPath, ...flags], { cwd: __dirname });
