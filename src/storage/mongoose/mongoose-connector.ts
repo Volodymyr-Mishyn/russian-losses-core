@@ -1,5 +1,6 @@
 import config from 'config';
 import mongoose from 'mongoose';
+import { Logger } from '../../_helpers/logger';
 
 interface DataBaseConfig {
   DataBase: string;
@@ -42,9 +43,9 @@ export class MongooseConnector {
         autoCreate: true,
         autoIndex: true,
       });
-      console.log('\x1b[32m%s\x1b[0m', 'Database connection established');
+      Logger.log(`Mongoose: Database connection established`, '\x1b[32m');
     } catch (e) {
-      console.log('\x1b[32m%s\x1b[0m', (e as any).message);
+      Logger.log(`Mongoose (ERROR): ${(e as any).message}`, '\x1b[32m');
     }
   }
 
@@ -54,7 +55,7 @@ export class MongooseConnector {
     }
     await mongoose.connection.close();
     this.connectionEstablished = false;
-    console.log('\x1b[32m%s\x1b[0m', 'Database disconnected');
+    Logger.log(`Mongoose: Database disconnected`, '\x1b[32m');
   }
 
   public scheduleDisconnect(disconnectTime: number = this._delayedDisconnectTime) {
@@ -64,6 +65,6 @@ export class MongooseConnector {
     this._disconnectTimeout = setTimeout(() => {
       this.disconnectDataBase();
     }, disconnectTime);
-    console.log('\x1b[32m%s\x1b[0m', `Database disconnection scheduled in ${disconnectTime / 1000}seconds`);
+    Logger.log(`Mongoose: Database disconnection scheduled in ${disconnectTime / 1000}seconds`, '\x1b[32m');
   }
 }

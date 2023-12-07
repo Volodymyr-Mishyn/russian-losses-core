@@ -1,7 +1,8 @@
 import express, { Application } from 'express';
 import { createDataRoutes } from './routes/data.routes';
-import { DatabaseAccessor } from 'src/_models/storage/database-accessor';
+import { DatabaseAccessor } from '../_models/storage/database-accessor';
 import { ConfigResolver } from './_helpers/config.resolver';
+import { Logger } from '../_helpers/logger';
 
 export class ServerApp {
   private _app: Application = express();
@@ -13,7 +14,7 @@ export class ServerApp {
     this._app.use(express.json());
     this._app.use(baseURL, dataRoutes);
     this._app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      Logger.log(`ServerApp: Server is running on port ${port}`);
     });
   }
 }
