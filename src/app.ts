@@ -1,6 +1,6 @@
 import path from 'path';
 import config from 'config';
-
+const minimist = require('minimist');
 import { DataScrappingApp } from './data-scrapping/data-scrapping.app';
 import { DatabaseAccessor } from './_models/storage/database-accessor';
 import { DatabaseAccessorFactory } from './storage/database-accessor.factory';
@@ -12,6 +12,7 @@ import { ServerApp } from './express/server.app';
 const appDir = path.dirname(require?.main?.filename || '');
 const childScriptPath = path.join(appDir, '../../russian-losses-scrapper/src/index.ts');
 const databaseType = config.get<string>('DataBase.Type');
+const cliArgs = minimist(process.argv.slice(2));
 
 export class Application {
   private _dataBaseAccessor: DatabaseAccessor = DatabaseAccessorFactory.create(databaseType);
@@ -45,7 +46,7 @@ export class Application {
       scheduleConfig,
     );
     const isDataPresent = await this._isDataAlreadyPresent();
-    if (!isDataPresent) {
+    if (cliArgs.force || !isDataPresent) {
       await dataScrappingApp.runInitial();
     }
     dataScrappingApp.runScheduled();
