@@ -47,11 +47,12 @@ export class ProcessRunner extends EventEmitter {
 
     this._process.on('exit', (code) => {
       Logger.log(`Process Runner: ${entryPath} exited with code ${code}`);
-      this._process = null;
+      this.stop();
     });
 
     this._process.on('error', (err) => {
       Logger.log(`Process Runner (ERROR): process error '${err}'`);
+      this.stop();
     });
   }
 
@@ -73,6 +74,7 @@ export class ProcessRunner extends EventEmitter {
   }
 
   public run(): void {
+    Logger.log(`Process Runner: Running process with parameters ${this._parameters.flags}`);
     this._setUpProcess();
     this._setUpProcessEvents();
   }
@@ -80,6 +82,7 @@ export class ProcessRunner extends EventEmitter {
   public stop(): void {
     if (this._process) {
       this._process.kill();
+      this._process = null;
     }
   }
 }

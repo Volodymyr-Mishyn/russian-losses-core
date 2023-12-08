@@ -14,6 +14,7 @@ export class MongooseConnector {
   private _delayedDisconnectTime = 120000;
   private _disconnectTimeout: NodeJS.Timeout | null = null;
   private _connectionEstablished = false;
+  private connectingPromise: Promise<void> | null = null;
   private constructor() {}
 
   public static getInstance() {
@@ -30,11 +31,7 @@ export class MongooseConnector {
     this._connectionEstablished = connectionEstablished;
   }
 
-  public async connectDataBase(): Promise<void> {
-    if (this.connectionEstablished) {
-      return;
-    }
-    this.connectionEstablished = true;
+  private async _connect(): Promise<void> {
     const databaseConfig = config.get<DataBaseConfig>('DataBase.Config');
     const { DataBase, Host, Port, Protocol } = databaseConfig;
     const MONGODB_URI = `${Protocol}://${Host}:${Port}/${DataBase}`;
@@ -43,10 +40,23 @@ export class MongooseConnector {
         autoCreate: true,
         autoIndex: true,
       });
+      this.connectionEstablished = true;
       Logger.log(`Mongoose: Database connection established`, '\x1b[32m');
     } catch (e) {
       Logger.log(`Mongoose (ERROR): ${(e as any).message}`, '\x1b[32m');
+    } finally {
+      this.connectingPromise = null;
     }
+  }
+
+  public async connectDataBase(): Promise<void> {
+    if (this.connectionEstablished) {
+      return;
+    }
+    if (!this.connectingPromise) {
+      this.connectingPromise = this._connect();
+    }
+    await this.connectingPromise;
   }
 
   public async disconnectDataBase(): Promise<void> {
