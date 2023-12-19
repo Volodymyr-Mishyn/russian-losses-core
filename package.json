@@ -5,8 +5,8 @@
   "main": "./src/index.ts",
   "scripts": {
     "test": "npx jest",
-    "prod": "ts-node -P ./tsconfig.json ./src/index.ts",
-    "dev": "ts-node -P ./tsconfig.json ./src/index.ts",
+    "prod": "NODE_ENV=production ts-node -P ./tsconfig.json ./src/index.ts",
+    "dev": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts",
     "dev:force": "ts-node -P ./tsconfig.json ./src/index.ts --force",
     "dev:reload": "nodemon"
   },
