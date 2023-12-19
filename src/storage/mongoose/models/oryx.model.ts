@@ -7,9 +7,11 @@ import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.docum
 
 const OryxEntityInfoSchema = new Schema<OryxEntityInfoDocument>(
   {
-    title: String,
+    name: { type: String, required: true },
+    code: { type: String, required: true },
+    entityTitle: String,
     description: [String],
-    images: [String],
+    imagesList: [String],
     url: String,
     createdAt: {
       type: Date,
@@ -26,6 +28,10 @@ const OryxEntityInfoSchema = new Schema<OryxEntityInfoDocument>(
     collection: `${StorageNames.ORYX}.entity-info`,
   },
 );
+OryxEntityInfoSchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
+});
 
 export const OryxEntityInfoModel = mongoose.model<OryxEntityInfoDocument>('OryxEntityInfo', OryxEntityInfoSchema);
 
