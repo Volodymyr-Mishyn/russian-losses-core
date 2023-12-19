@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types, Document } from 'mongoose';
 import { OryxSideLosses } from '../../../../_models/entities/oryx/oryx-model';
 
 export interface OryxSideLossesDocument extends Omit<OryxSideLosses, 'entityTypes'>, Document {

@@ -7,9 +7,9 @@ export interface Statistics {
 }
 
 export interface EntityInfo {
-  entityTitle?: string;
+  title?: string;
   description?: Array<string>;
-  imagesList?: Array<string>;
+  images?: Array<string>;
   url?: string;
 }
 

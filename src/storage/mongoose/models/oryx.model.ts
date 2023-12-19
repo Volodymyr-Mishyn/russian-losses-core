@@ -9,9 +9,9 @@ const OryxEntityInfoSchema = new Schema<OryxEntityInfoDocument>(
   {
     name: { type: String, required: true },
     code: { type: String, required: true },
-    entityTitle: String,
+    title: String,
     description: [String],
-    imagesList: [String],
+    images: [String],
     url: String,
     createdAt: {
       type: Date,
