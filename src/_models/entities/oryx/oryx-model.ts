@@ -6,6 +6,13 @@ export interface Statistics {
   captured: number;
 }
 
+export interface EntityInfo {
+  entityTitle?: string;
+  description?: Array<string>;
+  imagesList?: Array<string>;
+  url?: string;
+}
+
 export interface EntityStatusInfo {
   count: number;
   list: Array<string>;
@@ -16,8 +23,7 @@ export interface EntityModel {
   name: string;
   code: string;
   count: number;
-  description?: string;
-  image?: string;
+  info?: EntityInfo;
   countryName: string;
   entityType: string;
   destroyed: EntityStatusInfo;
@@ -33,8 +39,6 @@ export interface EntityType {
   name: string;
   code: string;
   countryName: string;
-  description?: string;
-  image?: string;
   statistics: Statistics;
   entities: Array<EntityModel>;
 }

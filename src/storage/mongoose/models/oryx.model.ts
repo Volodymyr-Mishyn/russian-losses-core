@@ -3,16 +3,45 @@ import { OryxEntityModelDocument } from '../documents/oryx/oryx-entity-model.doc
 import { StorageNames } from '../../enums/storage-names.enum';
 import { OryxEntityTypeDocument } from '../documents/oryx/oryx-entity-type.document';
 import { OryxSideLossesDocument } from '../documents/oryx/oryx-side-losses.document';
+import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.document';
+
+const OryxEntityInfoSchema = new Schema<OryxEntityInfoDocument>(
+  {
+    title: String,
+    description: [String],
+    images: [String],
+    url: String,
+    createdAt: {
+      type: Date,
+      immutable: true,
+      default: () => new Date(),
+    },
+    updatedAt: {
+      type: Date,
+      default: () => new Date(),
+    },
+  },
+  {
+    autoCreate: true,
+    collection: `${StorageNames.ORYX}.entity-info`,
+  },
+);
+
+export const OryxEntityInfoModel = mongoose.model<OryxEntityInfoDocument>('OryxEntityInfo', OryxEntityInfoSchema);
 
 const OryxEntityModelSchema = new Schema<OryxEntityModelDocument>(
   {
     name: { type: String, required: true },
     code: { type: String, required: true },
     count: Number,
-    description: String,
-    image: String,
     countryName: { type: String, required: true },
     entityType: { type: String, required: true },
+    info: {
+      title: String,
+      description: [String],
+      images: [String],
+      url: String,
+    },
     destroyed: {
       count: Number,
       list: [String],
@@ -64,8 +93,6 @@ const OryxEntityTypeSchema = new Schema<OryxEntityTypeDocument>(
     name: { type: String, required: true },
     code: { type: String, required: true },
     countryName: { type: String, required: true },
-    description: String,
-    image: String,
     statistics: {
       count: Number,
       destroyed: Number,
