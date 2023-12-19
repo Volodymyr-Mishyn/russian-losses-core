@@ -13,6 +13,7 @@ import { OryxEntityModelDocument } from '../documents/oryx/oryx-entity-model.doc
 import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.document';
 import { cleanOryxEntityName } from '../../../_helpers/oryx-utils/clean-oryx-entity-name';
 import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
+import { delay } from '../../../_helpers/delay';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private _termFetcher = TermFetcher.getInstance();
@@ -36,6 +37,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
       if (!simplifiedName) {
         return;
       }
+      await delay(250);
       const info = await this._termFetcher.searchTerm(simplifiedName);
       if (!info) {
         return;
@@ -67,7 +69,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         const newEntity = new this._oryxEntityModelModel(entityData);
         await newEntity.save();
         insertedEntityModels.push(newEntity._id);
-        this._insertEntityInfo(newEntity);
+        await this._insertEntityInfo(newEntity);
       }
     }
     return insertedEntityModels;

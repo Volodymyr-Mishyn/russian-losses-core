@@ -17,8 +17,8 @@ export class WikiFetcher {
     return WikiFetcher._instance;
   }
 
-  public async searchTerm(searchTerm: string): Promise<WikiData | null> {
-    const url = `${this._endpoint}/${encodeURIComponent(searchTerm)}`;
+  public async searchTerm(term: string): Promise<WikiData | null> {
+    const url = `${this._endpoint}/${encodeURIComponent(term)}`;
     try {
       const response = await fetch(url);
       const data: any = await response.json();
@@ -29,7 +29,7 @@ export class WikiFetcher {
       const wikiUrl = data.content_urls.desktop.page;
       return { imageUrl, summary, url: wikiUrl, title, description };
     } catch (error) {
-      console.error(`Error fetching data for ${searchTerm}: ${error}`);
+      console.error(`Error fetching Wiki data TERM:${term}; ERROR: ${error}`);
       return null;
     }
   }

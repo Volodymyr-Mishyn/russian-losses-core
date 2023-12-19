@@ -12,6 +12,7 @@ export class TermFetcher {
   private static _instance: TermFetcher | null = null;
   private _google = GoogleFetcher.getInstance();
   private _wiki = WikiFetcher.getInstance();
+  private _cache: Map<string, TermData | null> = new Map();
   private constructor() {}
   public static getInstance() {
     if (!TermFetcher._instance) {
@@ -36,15 +37,20 @@ export class TermFetcher {
       const images = imageUrl ? [imageUrl] : [];
       return { title, description: [description, summary], images, url };
     } catch (error) {
-      console.error(`Error fetching Wikipedia data: ${error}`);
+      console.error(`Error parsing Wikipedia data TERM: ${term}; ERROR: ${error}`);
       return null;
     }
   }
 
   public async searchTerm(term: string): Promise<TermData | null> {
+    if (this._cache.has(term)) {
+      return this._cache.get(term) || null;
+    }
+    let result: TermData | null = null;
     try {
       const results = await this._google.searchTerm(term);
       if (!results || results.length === 0) {
+        this._cache.set(term, null);
         return null;
       }
       const googleImages = this._extractGoogleImages(results);
@@ -59,18 +65,25 @@ export class TermFetcher {
               Array.isArray(wikiData.images) && wikiData.images?.length > 0
                 ? [...wikiData.images, ...googleImages]
                 : googleImages;
-            return {
+            result = {
               ...wikiData,
               description: [...(wikiData.description || []), wikiSnippet.snippet],
               images,
             };
+          } else {
+            result = { url: wikiSnippet.link, images: googleImages };
           }
+        } else {
+          result = { url: wikiSnippet.link, images: googleImages };
         }
+      } else {
+        result = googleImages.length > 0 ? { images: googleImages } : null;
       }
-      return googleImages.length > 0 ? { images: googleImages } : null;
     } catch (error) {
-      console.error(`Error processing search results: ${error}`);
-      return null;
+      console.error(`Error processing search ${term} results: ${error}`);
+      result = null;
     }
+    this._cache.set(term, result);
+    return result;
   }
 }

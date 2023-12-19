@@ -28,7 +28,7 @@ export class GoogleFetcher {
       const data: any = await response.json();
       return data.items;
     } catch (error) {
-      console.error(`Error during Google CSE search: ${error}`);
+      console.error(`Error during Google CSE search TERM:${term}; ERROR: ${error}`);
       return null;
     }
   }
