@@ -45,7 +45,6 @@ export class TermFetcher {
     try {
       const results = await this._google.searchTerm(term);
       if (!results || results.length === 0) {
-        console.log('No results found');
         return null;
       }
       const googleImages = this._extractGoogleImages(results);
