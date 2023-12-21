@@ -45,7 +45,7 @@ export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapDat
     const processedEntity: EntityModel = {
       ...entity,
       code: this._createCodeForName(entity.name),
-      entityType,
+      entityType: this._createCodeForName(entityType),
       countryName,
     };
     return processedEntity;
