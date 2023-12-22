@@ -115,7 +115,7 @@ describe('OryxDataProcessor', () => {
                   count: 1,
                   list: [],
                 },
-                entityType: 'Tanks',
+                entityType: 'tanks',
                 name: 'some tank',
                 code: 'some_tank',
               },
