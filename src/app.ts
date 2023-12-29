@@ -8,9 +8,11 @@ import { RunnerType } from './_models/process/process-parameters';
 import { SchedulerFactory } from './scheduler/scheduler-factory';
 import { ScheduledScrapping } from './_models/schedule/scheduled-scrapping';
 import { ServerApp } from './express/server.app';
+import { Logger } from './_helpers/logger';
 
 const appDir = path.dirname(require?.main?.filename || '');
-const childScriptPath = path.join(appDir, '../../russian-losses-scrapper/src/index.ts');
+const scraperAppName = config.get<string>('scraperAppName');
+const childScriptPath = path.join(appDir, `../../${scraperAppName}/src/index.ts`);
 const databaseType = config.get<string>('DataBase.Type');
 const cliArgs = minimist(process.argv.slice(2));
 
@@ -33,7 +35,7 @@ export class Application {
     return modDataPresent && russiaOryxDataPresent && ukraineOryxDataPresent;
   }
 
-  private async _runScrapper() {
+  private async _runScraper() {
     const schedulerFactory = new SchedulerFactory();
     const scheduleConfig = config.get<ScheduledScrapping>('Scrapping');
     const dataScrappingApp = new DataScrappingApp(
@@ -47,8 +49,10 @@ export class Application {
     );
     const isDataPresent = await this._isDataAlreadyPresent();
     if (cliArgs.force || !isDataPresent) {
+      Logger.log(`Running initial scrapping`, '\x1b[36m');
       await dataScrappingApp.runInitial();
     }
+    Logger.log(`Scheduling scrapping`, '\x1b[36m');
     dataScrappingApp.runScheduled();
   }
 
@@ -58,7 +62,12 @@ export class Application {
   }
 
   public async run() {
-    await this._runScrapper();
-    this._runServer();
+    Logger.log(`Application booted successfully`, '\x1b[36m');
+    if (cliArgs.scraper) {
+      await this._runScraper();
+    }
+    if (cliArgs.server) {
+      this._runServer();
+    }
   }
 }

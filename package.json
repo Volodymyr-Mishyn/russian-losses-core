@@ -5,10 +5,11 @@
   "main": "./src/index.ts",
   "scripts": {
     "test": "npx jest",
-    "prod": "ts-node -P ./tsconfig.json ./src/index.ts",
-    "dev": "ts-node -P ./tsconfig.json ./src/index.ts",
-    "dev:force": "ts-node -P ./tsconfig.json ./src/index.ts --force",
-    "dev:reload": "nodemon"
+    "dev": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts --scraper --server",
+    "dev:force": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts --scraper --server --force",
+    "dev:reload": "nodemon",
+    "prod:scraper": "NODE_ENV=production ts-node -P ./tsconfig.json ./src/index.ts --scraper",
+    "prod:server": "NODE_ENV=production ts-node -P ./tsconfig.json ./src/index.ts --server"
   },
   "author": "Volodymyr Mishyn",
   "license": "ISC",

@@ -1,18 +1,52 @@
 import { EntityModel, EntityType, OryxSideLosses } from '../../../_models/entities/oryx/oryx-model';
-import { OryxEntityModelModel, OryxEntityTypeModel, OryxSideLossesModel } from '../models/oryx.model';
+import {
+  OryxEntityInfoModel,
+  OryxEntityModelModel,
+  OryxEntityTypeModel,
+  OryxSideLossesModel,
+} from '../models/oryx.model';
 import { Model, Types } from 'mongoose';
 import { MongooseSaver } from './mongoose-saver';
 import { OryxSideLossesDocument } from '../documents/oryx/oryx-side-losses.document';
 import { OryxEntityTypeDocument } from '../documents/oryx/oryx-entity-type.document';
 import { OryxEntityModelDocument } from '../documents/oryx/oryx-entity-model.document';
+import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.document';
+import { cleanOryxEntityName } from '../../../_helpers/oryx-utils/clean-oryx-entity-name';
+import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
+import { delay } from '../../../_helpers/delay';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
+  private _termFetcher = TermFetcher.getInstance();
   constructor(
     private _oryxSideLossesModel: Model<OryxSideLossesDocument> = OryxSideLossesModel,
     private _oryxEntityTypeModel: Model<OryxEntityTypeDocument> = OryxEntityTypeModel,
     private _oryxEntityModelModel: Model<OryxEntityModelDocument> = OryxEntityModelModel,
+    private _oryxEntityInfoModel: Model<OryxEntityInfoDocument> = OryxEntityInfoModel,
   ) {
     super();
+  }
+
+  private async _insertEntityInfo(entityData: OryxEntityModelDocument): Promise<void> {
+    const { code, name } = entityData;
+    const existingEntityInfo = await this._oryxEntityInfoModel.findOne({ code, name });
+    if (existingEntityInfo) {
+      entityData.info = existingEntityInfo;
+      entityData.save();
+    } else {
+      const simplifiedName = cleanOryxEntityName(name);
+      if (!simplifiedName) {
+        return;
+      }
+      await delay(250);
+      const info = await this._termFetcher.searchTerm(simplifiedName);
+      if (!info) {
+        return;
+      }
+      const newEntityInfo = new this._oryxEntityInfoModel({ code, name, ...info });
+      await newEntityInfo.save();
+      entityData.info = newEntityInfo;
+      entityData.save();
+    }
   }
 
   private async _insertEntities(entitiesData: Array<EntityModel>): Promise<Array<Types.ObjectId>> {
@@ -35,6 +69,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         const newEntity = new this._oryxEntityModelModel(entityData);
         await newEntity.save();
         insertedEntityModels.push(newEntity._id);
+        await this._insertEntityInfo(newEntity);
       }
     }
     return insertedEntityModels;

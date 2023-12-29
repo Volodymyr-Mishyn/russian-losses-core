@@ -1,4 +1,5 @@
 import config from 'config';
+require('dotenv').config();
 import mongoose from 'mongoose';
 import { Logger } from '../../_helpers/logger';
 
@@ -11,7 +12,7 @@ interface DataBaseConfig {
 
 export class MongooseConnector {
   private static _instance: MongooseConnector | null = null;
-  private _delayedDisconnectTime = 120000;
+  private _delayedDisconnectTime = 300000;
   private _disconnectTimeout: NodeJS.Timeout | null = null;
   private _connectionEstablished = false;
   private connectingPromise: Promise<void> | null = null;
@@ -34,7 +35,9 @@ export class MongooseConnector {
   private async _connect(): Promise<void> {
     const databaseConfig = config.get<DataBaseConfig>('DataBase.Config');
     const { DataBase, Host, Port, Protocol } = databaseConfig;
-    const MONGODB_URI = `${Protocol}://${Host}:${Port}/${DataBase}`;
+    const MONGODB_URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : `${Protocol}://${Host}:${Port}/${DataBase}`;
+    Logger.log(`Mongoose: attempting connection to "${MONGODB_URI}"`, '\x1b[32m');
+    Logger.log(`Mongoose: attempting connection to  mongo"`, '\x1b[32m');
     try {
       await mongoose.connect(MONGODB_URI, {
         autoCreate: true,

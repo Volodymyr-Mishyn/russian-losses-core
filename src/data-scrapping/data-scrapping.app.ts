@@ -4,6 +4,7 @@ import { ProcessBaseParameters } from '../_models/process/process-parameters';
 import { DatabaseAccessor } from '../_models/storage/database-accessor';
 import { ScheduledScrapping } from '../_models/schedule/scheduled-scrapping';
 import { DataScrappingFacade } from './data-scrapping-facade';
+import { Logger } from '../_helpers/logger';
 
 export class DataScrappingApp {
   private _dataScrappingFacade!: DataScrappingFacade;
@@ -17,14 +18,21 @@ export class DataScrappingApp {
   }
 
   public async runInitial() {
+    Logger.log(`DS_APP:Execution of MOD started`, '\x1b[33m');
     const scrapAllMoDAction = this._dataScrappingFacade.createScrapAllMoDReportsAction();
     await scrapAllMoDAction.execute();
+    Logger.log(`DS_APP:Execution of MOD finished`, '\x1b[33m');
     await delay(10000);
+    Logger.log(`DS_APP:Execution of Oryx russia started`, '\x1b[33m');
     const scrapOryxRussiaAction = this._dataScrappingFacade.createScrapRussianLossesOryxAction();
     await scrapOryxRussiaAction.execute();
-    await delay(10000);
+    Logger.log(`DS_APP:Execution of Oryx russia finished`, '\x1b[33m');
+    Logger.log(`DS_APP: DELAY 300000ms`, '\x1b[33m');
+    await delay(300000);
+    Logger.log(`DS_APP:Execution of Oryx Ukraine started`, '\x1b[33m');
     const scrapOryxUkraineAction = this._dataScrappingFacade.createScrapUkrainianLossesOryxAction();
     await scrapOryxUkraineAction.execute();
+    Logger.log(`DS_APP:Execution of Oryx Ukraine finished`, '\x1b[33m');
   }
 
   public runScheduled(): void {
