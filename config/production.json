@@ -3,16 +3,16 @@
     "Type": "mongodb",
     "Config": {
       "Protocol": "mongodb",
-      "Host": "127.0.0.1",
+      "Host": "mongodb",
       "Port": 27017,
       "DataBase": "russian-losses"
     }
   },
   "Server": {
     "BaseURL": "/api",
-    "Port": 3000
+    "Port": 8080
   },
-  "scraperAppName": "russian-losses-scraper",
+  "scraperAppName": "scraper-app",
   "Scrapping": {
     "Oryx": {
       "Russia": {

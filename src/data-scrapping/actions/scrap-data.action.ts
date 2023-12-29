@@ -15,12 +15,15 @@ export class ScrapDataAction implements Action {
       this._processRunner.run();
       const receivedData = await new Promise((resolve) => {
         this._processRunner.once('data', (data) => {
-          Logger.log('Data parsed successfully', '\x1b[36m');
+          Logger.log('Scrap_Action: Data parsed successfully', '\x1b[36m');
           resolve(data);
         });
       });
+      Logger.log('Scrap_Action: proceeding to processing', '\x1b[36m');
       const processedData = await this._dataProcessor.process(receivedData);
+      Logger.log('Scrap_Action: proceeding to saving', '\x1b[36m');
       await this._dataSaver.save(processedData);
+      Logger.log('Scrap_Action: Save executed', '\x1b[36m');
       return {
         status: true,
       };

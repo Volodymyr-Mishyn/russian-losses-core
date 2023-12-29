@@ -6,7 +6,6 @@ import { Logger } from '../_helpers/logger';
 
 export class ProcessRunner extends EventEmitter {
   private _process: ChildProcess | null = null;
-  private _processBufferLimit = 8192;
 
   constructor(private _parameters: ProcessParameters) {
     super();
@@ -20,23 +19,23 @@ export class ProcessRunner extends EventEmitter {
     let filteredResponse = '';
     let processingFilteredResponse = false;
     this._process.stdout?.on('data', async (data) => {
+      Logger.log(`Process Runner: ${entryPath} chunk of data received`);
       const output: string = data.toString();
-      const chunkSize = output.length;
       if (output.includes(uniqueKey)) {
+        Logger.log(`Process Runner: ${uniqueKey} Starting to process response`);
         filteredResponse = output;
         processingFilteredResponse = true;
       } else if (processingFilteredResponse) {
         filteredResponse += output;
       }
-      if (processingFilteredResponse && chunkSize >= this._processBufferLimit) {
-        return;
-      }
       if (!processingFilteredResponse) {
         return;
       }
       try {
+        Logger.log(`Process Runner: ${entryPath} Trying to parse JSON`);
         const parsedData = JSON.parse(filteredResponse)[uniqueKey];
         this.emit(`data`, parsedData);
+        Logger.log(`Process Runner: ${entryPath} SUCCESS. Emitting data upwards`);
         processingFilteredResponse = false;
         filteredResponse = '';
         this.stop();
@@ -69,6 +68,7 @@ export class ProcessRunner extends EventEmitter {
       return;
     }
     this._process = spawn(runner, [entryPath, ...flags], { cwd: __dirname });
+    Logger.log(`Process Runner: ${entryPath} successfully spawned!`);
     this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
     this._process?.stdout?.setEncoding('utf8');
   }
