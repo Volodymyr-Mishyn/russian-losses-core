@@ -36,9 +36,8 @@ jobs:
       - name: Build and Push Scraper Application
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-           ECR_URI: public.ecr.aws/b6w6o0v0/russian-losses-core
+          ECR_URI: public.ecr.aws/b6w6o0v0/russian-losses-core
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.scraper .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
