@@ -22,20 +22,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Build, tag, and push docker image to Amazon ECR Public
+      - name: Build and Push Core Application
         env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: my-ecr-public-registry-alias
-          REPOSITORY: my-ecr-public-repo
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: russian-losses-core
+          IMAGE_TAG: ${{ github.sha }}-core
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG -f Dockerfile.server .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_URI:$IMAGE_TAG -f Dockerfile.server .
+          docker push $ECR_URI:$IMAGE_TAG
 
       - name: Build and Push Scraper Application
         env:
-          ECR_URI: public.ecr.aws/b6w6o0v0/russian-losses-core
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: russian-losses-core
+          IMAGE_TAG: ${{ github.sha }}-scraper
         run: |
           docker build -t $ECR_URI:$IMAGE_TAG -f Dockerfile.scraper .
           docker push $ECR_URI:$IMAGE_TAG
