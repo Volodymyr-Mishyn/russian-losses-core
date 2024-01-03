@@ -26,7 +26,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: russian-losses-core
-          IMAGE_TAG: ${{ github.sha }}-core
+          IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.server .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -36,7 +36,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: russian-losses-core
-          IMAGE_TAG: ${{ github.sha }}-scraper
+          IMAGE_TAG: latest-scraper
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.scraper .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
