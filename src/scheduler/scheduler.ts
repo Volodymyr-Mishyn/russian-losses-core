@@ -59,7 +59,7 @@ export class Scheduler {
       timeZone: this._scheduleConfig.timezone,
     });
     const infoString = `Execution scheduled on ${job.nextDate()}`;
-    Logger.log(`Scheduler: ${infoString}`, '\x1b[30m');
+    Logger.log(`Scheduler: ${infoString}`, '\x1b[33m');
     job.start();
   }
 
