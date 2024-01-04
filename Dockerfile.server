@@ -1,5 +1,5 @@
 # Use an Alpine based image for a lightweight container
-FROM --platform=linux/amd64 node:21-alpine
+FROM node:21-alpine
 
 # Set the working directory in the container
 WORKDIR /usr/src/core-app-server

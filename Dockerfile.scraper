@@ -1,5 +1,5 @@
 # reference https://developers.google.com/web/tools/puppeteer/troubleshooting#setting_up_chrome_linux_sandbox
-FROM --platform=linux/amd64 node:current-alpine
+FROM node:current-alpine
 
 # manually installing chrome
 RUN apk add chromium
