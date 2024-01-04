@@ -69,8 +69,10 @@ export class ProcessRunner extends EventEmitter {
     }
     this._process = spawn(runner, [entryPath, ...flags], { cwd: __dirname });
     Logger.log(`Process Runner: ${entryPath} successfully spawned!`);
-    this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
-    this._process?.stdout?.setEncoding('utf8');
+    if (process.env.NODE_ENV !== 'production') {
+      this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
+      this._process?.stdout?.setEncoding('utf8');
+    }
   }
 
   public run(): void {

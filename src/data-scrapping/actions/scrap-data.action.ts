@@ -12,6 +12,7 @@ export class ScrapDataAction implements Action {
   ) {}
   public async execute(): Promise<ActionExecutionResult> {
     try {
+      Logger.log('Scrap_Action: running process', '\x1b[36m');
       this._processRunner.run();
       const receivedData = await new Promise((resolve) => {
         this._processRunner.once('data', (data) => {
