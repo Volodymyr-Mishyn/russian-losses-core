@@ -3,7 +3,8 @@ import { DataSaver } from '../../../_models/data-saver';
 import { EstablishedDatabaseConnection } from '../mongoose-connector.decorator';
 export abstract class MongooseSaver<D> implements DataSaver<D> {
   protected abstract innerSave(data: D): Promise<void>;
-  @EstablishedDatabaseConnection({ disconnectTime: 600000 })
+
+  @EstablishedDatabaseConnection({ disconnectTime: 1200000 })
   public async save(data: D): Promise<boolean> {
     try {
       await this.innerSave(data);
