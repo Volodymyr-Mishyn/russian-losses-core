@@ -7,11 +7,11 @@ export function createDataRoutes(databaseAccessor: DatabaseAccessor) {
   const dataController = new DataController(databaseAccessor);
   const router = Router();
   router.get(`/mod`, (request: Request, response: Response) => {
-    Logger.log(`GET /mod`);
+    Logger.log(`ServerApp: GET /mod`);
     return dataController.getMoDData(request, response);
   });
   router.get(`/oryx`, (request: Request, response: Response) => {
-    Logger.log(`GET /oryx`);
+    Logger.log(`ServerApp: GET /oryx`);
     return dataController.getOryxCountryData(request, response);
   });
   return router;
