@@ -11,7 +11,7 @@ import { OryxSideLossesDocument } from '../documents/oryx/oryx-side-losses.docum
 import { OryxEntityTypeDocument } from '../documents/oryx/oryx-entity-type.document';
 import { OryxEntityModelDocument } from '../documents/oryx/oryx-entity-model.document';
 import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.document';
-import { cleanOryxEntityName } from '../../../_helpers/oryx-utils/clean-oryx-entity-name';
+import { cleanOryxEntityNameSimple } from '../../../_helpers/oryx-utils/clean-oryx-entity-name';
 import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
 import { delay } from '../../../_helpers/delay';
 
@@ -33,7 +33,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
       entityData.info = existingEntityInfo;
       entityData.save();
     } else {
-      const simplifiedName = cleanOryxEntityName(name);
+      const simplifiedName = cleanOryxEntityNameSimple(name);
       if (!simplifiedName) {
         return;
       }

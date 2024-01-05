@@ -22,6 +22,9 @@ export class GoogleFetcher {
   public async searchTerm(term: string): Promise<Array<GoogleData> | null> {
     const apiKey = process.env.GOOGLE_API_KEY;
     const cseId = process.env.GOOGLE_CSE_ID;
+    if (!apiKey || !cseId) {
+      return null;
+    }
     const url = `${this._endpoint}?key=${apiKey}&cx=${cseId}&q=${encodeURIComponent(term)}`;
     try {
       const response = await fetch(url);
