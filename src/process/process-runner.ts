@@ -34,10 +34,10 @@ export class ProcessRunner extends EventEmitter {
         return;
       }
       try {
-        Logger.log(`Process Runner: ${entryPath} Trying to parse JSON`);
+        Logger.log(`Process Runner: ${uniqueKey} Trying to parse JSON`);
         const parsedData = JSON.parse(filteredResponse)[uniqueKey];
+        Logger.log(`Process Runner: ${uniqueKey} SUCCESS. Emitting data upwards`);
         this.emit(`data`, parsedData);
-        Logger.log(`Process Runner: ${entryPath} SUCCESS. Emitting data upwards`);
         processingFilteredResponse = false;
         filteredResponse = '';
         this.stop();
@@ -47,7 +47,7 @@ export class ProcessRunner extends EventEmitter {
     });
 
     this._process.on('exit', (code) => {
-      Logger.log(`Process Runner: ${entryPath} exited with code ${code}`);
+      Logger.log(`Process Runner: ${uniqueKey} exited with code ${code}`);
       this.stop();
     });
 
