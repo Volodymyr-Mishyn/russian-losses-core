@@ -21,8 +21,8 @@ export class ProcessRunner extends EventEmitter {
     let filteredResponse = '';
     let processingFilteredResponse = false;
     this._process.stdout?.on('data', async (data) => {
-      Logger.log(`Process Runner: ${entryPath} chunk of data received`);
       const output: string = data.toString();
+      Logger.log(`Process Runner: ${uniqueKey} chunk of data received. DATA: ${output.slice(0, 100)}...`);
       if (output.includes(uniqueKey)) {
         Logger.log(`Process Runner: ${uniqueKey} Starting to process response`);
         filteredResponse = output;
