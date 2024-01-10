@@ -27,7 +27,7 @@
       }
     },
     "MoD": {
-      "cronTime": "0 9,10,11,13,17 * * *",
+      "cronTime": "0 9,10,11,13,14,15,17 * * *",
       "attempts": [],
       "timezone": "Europe/Kiev"
     }

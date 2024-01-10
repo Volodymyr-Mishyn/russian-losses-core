@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { DatabaseAccessor } from '../../_models/storage/database-accessor';
 import { MoDData } from '../../_models/entities/mod/mod-model';
 import { flattenMoDData } from '../../_helpers/mod-utils/mod-flattener';
+import { Logger } from '../../_helpers/logger';
 
 export class DataController {
   constructor(private _dataBaseAccessor: DatabaseAccessor) {}
@@ -16,9 +17,10 @@ export class DataController {
         data = await this._dataBaseAccessor.getAllMoDData();
       }
       const responseData = flat ? flattenMoDData(data) : data;
+      Logger.log(`Data controller: MoD SUCCESS ${responseData.length}`);
       response.send(responseData);
     } catch (error) {
-      console.error('Error: ', error);
+      Logger.log(`Data controller: MoD ERROR ${error}`);
       response.status(500).send();
     }
   }
@@ -30,9 +32,11 @@ export class DataController {
       return;
     }
     try {
-      const allMoDData = await this._dataBaseAccessor.getAllOryxDataForCountry(`${country}`);
-      response.send(allMoDData);
+      const responseData = await this._dataBaseAccessor.getAllOryxDataForCountry(`${country}`);
+      Logger.log(`Data controller: Oryx SUCCESS ${responseData.countryName} ${responseData.statistics}`);
+      response.send(responseData);
     } catch (error) {
+      Logger.log(`Data controller: Oryx ERROR ${error}`);
       response.status(500).send();
     }
   }

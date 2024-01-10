@@ -29,6 +29,7 @@ export class ServerApp {
 
     this._app.listen(port, () => {
       Logger.log(`ServerApp: Server is running on port ${port}`);
+      Logger.log(`ServerApp: Server is running with base url ${baseURL}`);
     });
   }
 }

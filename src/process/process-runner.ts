@@ -25,12 +25,15 @@ export class ProcessRunner extends EventEmitter {
       Logger.log(`Process Runner: ${uniqueKey} chunk of data received. DATA: ${output.slice(0, 100)}...`);
       if (output.includes(uniqueKey)) {
         Logger.log(`Process Runner: ${uniqueKey} Starting to process response`);
+        Logger.log(`Process Runner:(success slice) ${output.slice(0, 100)} ...`);
         filteredResponse = output;
         processingFilteredResponse = true;
       } else if (processingFilteredResponse) {
         filteredResponse += output;
       }
       if (!processingFilteredResponse) {
+        Logger.log(`Process Runner: still no ${uniqueKey} in response`);
+        Logger.log(`Process Runner: ${output.slice(0, 100)} ...`);
         return;
       }
       try {

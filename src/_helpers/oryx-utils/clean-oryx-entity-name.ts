@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export function cleanOryxEntityName(name: string): string | null {
   if (/unknown/i.test(name)) {
     return null;
@@ -17,6 +20,17 @@ export function cleanOryxEntityName(name: string): string | null {
   return cleanedName || null;
 }
 
+export function cleanOryxEntityNameSimple(name: string): string | null {
+  if (/unknown/i.test(name)) {
+    return null;
+  }
+  const cleanedName = name
+    .replace(/['"]/g, '') // Remove quotes
+    .replace(/\(.+?\)/g, '') // Remove anything inside parentheses
+    .trim();
+  return cleanedName || null;
+}
+
 export function cleanOryxEntityNames(names: string[]): (string | null)[] {
-  return names.map(cleanOryxEntityName);
+  return names.map(cleanOryxEntityNameSimple);
 }

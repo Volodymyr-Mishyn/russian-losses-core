@@ -5,36 +5,32 @@ services:
   mongodb:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongodb_data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo_user
-      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
 
   # Core application service
   core:
     build:
       context: .
-      dockerfile: Dockerfile.server 
+      dockerfile: Dockerfile.server
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
-      - MONGODB_URI=mongodb://mongo_user:mongo_password@mongodb:27017/russian-losses?authSource=admin
+      - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/russian-losses?authSource=admin
     depends_on:
       - mongodb
 
   # Scraper service
   scraper:
-    deploy:
-      resources:
-        limits:
-          memory: 4G
     build:
       context: .
       dockerfile: Dockerfile.scraper
     environment:
-      - MONGODB_URI=mongodb://mongo_user:mongo_password@mongodb:27017/russian-losses?authSource=admin
+      - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/russian-losses?authSource=admin
     depends_on:
       - mongodb
 
