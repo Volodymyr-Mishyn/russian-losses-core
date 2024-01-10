@@ -11,8 +11,10 @@ export class ServerApp {
     const baseURL = ConfigResolver.getBaseURL();
     const port = ConfigResolver.getPort();
     const dataRoutes = createDataRoutes(this._dataBaseAccessor);
+
     this._app.use(express.json());
     this._app.use(baseURL, dataRoutes);
+
     const router = Router();
     router.get('/health', (req, res) => {
       const health = {
@@ -24,6 +26,7 @@ export class ServerApp {
       res.status(200).send(health);
     });
     this._app.use('/', router);
+
     this._app.listen(port, () => {
       Logger.log(`ServerApp: Server is running on port ${port}`);
       Logger.log(`ServerApp: Server is running with base url ${baseURL}`);

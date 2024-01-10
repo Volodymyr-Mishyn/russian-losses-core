@@ -1,8 +1,10 @@
+require('dotenv').config();
 import { spawn, ChildProcess } from 'child_process';
 import { ProcessParameters } from '../_models/process/process-parameters';
 import * as fs from 'fs';
 import EventEmitter from 'events';
 import { Logger } from '../_helpers/logger';
+import path from 'path';
 
 export class ProcessRunner extends EventEmitter {
   private _process: ChildProcess | null = null;
@@ -19,8 +21,8 @@ export class ProcessRunner extends EventEmitter {
     let filteredResponse = '';
     let processingFilteredResponse = false;
     this._process.stdout?.on('data', async (data) => {
-      Logger.log(`Process Runner: ${entryPath} chunk of data received`);
       const output: string = data.toString();
+      Logger.log(`Process Runner: ${uniqueKey} chunk of data received. DATA: ${output.slice(0, 100)}...`);
       if (output.includes(uniqueKey)) {
         Logger.log(`Process Runner: ${uniqueKey} Starting to process response`);
         Logger.log(`Process Runner:(success slice) ${output.slice(0, 100)} ...`);
@@ -35,10 +37,10 @@ export class ProcessRunner extends EventEmitter {
         return;
       }
       try {
-        Logger.log(`Process Runner: ${entryPath} Trying to parse JSON`);
+        Logger.log(`Process Runner: ${uniqueKey} Trying to parse JSON`);
         const parsedData = JSON.parse(filteredResponse)[uniqueKey];
+        Logger.log(`Process Runner: ${uniqueKey} SUCCESS. Emitting data upwards`);
         this.emit(`data`, parsedData);
-        Logger.log(`Process Runner: ${entryPath} SUCCESS. Emitting data upwards`);
         processingFilteredResponse = false;
         filteredResponse = '';
         this.stop();
@@ -48,7 +50,7 @@ export class ProcessRunner extends EventEmitter {
     });
 
     this._process.on('exit', (code) => {
-      Logger.log(`Process Runner: ${entryPath} exited with code ${code}`);
+      Logger.log(`Process Runner: ${uniqueKey} exited with code ${code}`);
       this.stop();
     });
 
@@ -59,8 +61,14 @@ export class ProcessRunner extends EventEmitter {
   }
 
   private _createDebugFile(uniqueKey: string): fs.WriteStream {
+    const directory = './debug';
     const date = new Date();
-    const outputFile = fs.createWriteStream(`./debug/${uniqueKey}(${date.toUTCString()}).txt`);
+    const fileName = `${uniqueKey}(${date.toUTCString()}).txt`;
+    const filePath = path.join(directory, fileName);
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
+    const outputFile = fs.createWriteStream(filePath);
     return outputFile;
   }
 
@@ -72,6 +80,13 @@ export class ProcessRunner extends EventEmitter {
     }
     this._process = spawn(runner, [entryPath, ...flags], { cwd: __dirname });
     Logger.log(`Process Runner: ${entryPath} successfully spawned!`);
+    this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
+    this._process?.stdout?.setEncoding('utf8');
+    this._process = spawn(runner, [entryPath, ...flags], {
+      cwd: __dirname,
+      env: { ...process.env, NODE_ENV: process.env.NODE_ENV },
+    });
+    Logger.log(`Process Runner: ${entryPath} successfully spawned in ${process.env.NODE_ENV} mode!`);
     if (process.env.NODE_ENV !== 'production') {
       this._process?.stdout?.pipe(this._createDebugFile(uniqueKey));
       this._process?.stdout?.setEncoding('utf8');
@@ -80,8 +95,12 @@ export class ProcessRunner extends EventEmitter {
 
   public run(): void {
     Logger.log(`Process Runner: Running process with parameters ${this._parameters.flags}`);
-    this._setUpProcess();
-    this._setUpProcessEvents();
+    try {
+      this._setUpProcess();
+      this._setUpProcessEvents();
+    } catch (e) {
+      Logger.log(`Process Runner ERROR (Setup process): ${JSON.stringify(e)}`);
+    }
   }
 
   public stop(): void {
