@@ -12,7 +12,7 @@
     "BaseURL": "/api",
     "Port": 3000
   },
-  "scraperAppName": "russian-losses-scraper",
+  "scraperAppName": "russian-losses-scrapper",
   "Scrapping": {
     "Oryx": {
       "Russia": {
