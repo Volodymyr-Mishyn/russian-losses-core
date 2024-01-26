@@ -14,6 +14,7 @@ import { OryxEntityInfoDocument } from '../documents/oryx/oryx-entity-info.docum
 import { cleanOryxEntityNameSimple } from '../../../_helpers/oryx-utils/clean-oryx-entity-name';
 import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
 import { delay } from '../../../_helpers/delay';
+import { Logger } from '../../../_helpers/logger';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private _termFetcher = TermFetcher.getInstance();
@@ -24,9 +25,15 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
     private _oryxEntityInfoModel: Model<OryxEntityInfoDocument> = OryxEntityInfoModel,
   ) {
     super();
+    if (!this._termFetcher.searchAvailable()) {
+      Logger.log(`(!) SEARCH NOT AVAILABLE (!)`, '\x1b[32m');
+    }
   }
 
   private async _insertEntityInfo(entityData: OryxEntityModelDocument): Promise<void> {
+    if (!this._termFetcher.searchAvailable()) {
+      return;
+    }
     const { code, name } = entityData;
     const existingEntityInfo = await this._oryxEntityInfoModel.findOne({ code, name });
     if (existingEntityInfo) {

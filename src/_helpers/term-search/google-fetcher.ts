@@ -19,6 +19,12 @@ export class GoogleFetcher {
     return GoogleFetcher._instance;
   }
 
+  public searchAvailable(): boolean {
+    const apiKey = process.env.GOOGLE_API_KEY;
+    const cseId = process.env.GOOGLE_CSE_ID;
+    return Boolean(apiKey && cseId);
+  }
+
   public async searchTerm(term: string): Promise<Array<GoogleData> | null> {
     const apiKey = process.env.GOOGLE_API_KEY;
     const cseId = process.env.GOOGLE_CSE_ID;
