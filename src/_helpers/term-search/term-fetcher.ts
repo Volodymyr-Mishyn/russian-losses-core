@@ -42,6 +42,10 @@ export class TermFetcher {
     }
   }
 
+  public searchAvailable(): boolean {
+    return this._google.searchAvailable();
+  }
+
   public async searchTerm(term: string): Promise<TermData | null> {
     if (this._cache.has(term)) {
       return this._cache.get(term) || null;
