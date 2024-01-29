@@ -7,10 +7,11 @@ import {
 } from '../../_models/scrapping/scrap-results/oryx-scrap-data';
 import { delay } from '../../_helpers/delay';
 import { EntityModel, EntityType, OryxSideLosses } from '../../_models/entities/oryx/oryx-model';
+import { OryxTypeNameMarshaller } from '../../_helpers/oryx-utils/oryx-type-name-marshaller';
 
 export class OryxDataProcessor implements DataProcessor<ScrapResult<OryxScrapData>, OryxSideLosses> {
   private _createCodeForName(name: string): string {
-    return name.toLowerCase().trim().replace(/\s+/g, '_');
+    return OryxTypeNameMarshaller.getInstance().marshall(name);
   }
 
   private async _processEntityTypes(entities: OryxEntityType[], countryName: string): Promise<EntityType[]> {
