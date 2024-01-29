@@ -15,7 +15,7 @@ import { cleanOryxEntityNameSimple } from '../../../_helpers/oryx-utils/clean-or
 import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
 import { delay } from '../../../_helpers/delay';
 import { Logger } from '../../../_helpers/logger';
-import { OryxTypeNameMarshaller } from 'src/_helpers/oryx-utils/oryx-type-name-marshaller';
+import { OryxTypeNameMarshaller } from '../../../_helpers/oryx-utils/oryx-type-name-marshaller';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private _termFetcher = TermFetcher.getInstance();
