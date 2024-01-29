@@ -15,6 +15,7 @@ import { cleanOryxEntityNameSimple } from '../../../_helpers/oryx-utils/clean-or
 import { TermFetcher } from '../../../_helpers/term-search/term-fetcher';
 import { delay } from '../../../_helpers/delay';
 import { Logger } from '../../../_helpers/logger';
+import { OryxTypeNameMarshaller } from 'src/_helpers/oryx-utils/oryx-type-name-marshaller';
 
 export class OryxSaver extends MongooseSaver<OryxSideLosses> {
   private _termFetcher = TermFetcher.getInstance();
@@ -34,7 +35,7 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
     if (!this._termFetcher.searchAvailable()) {
       return;
     }
-    const { code, name } = entityData;
+    const { code, name, entityType } = entityData;
     const existingEntityInfo = await this._oryxEntityInfoModel.findOne({ code, name });
     if (existingEntityInfo) {
       entityData.info = existingEntityInfo;
@@ -45,7 +46,8 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         return;
       }
       await delay(250);
-      const info = await this._termFetcher.searchTerm(simplifiedName);
+      const searchTerm = `"${simplifiedName}" ${OryxTypeNameMarshaller.getInstance().deMarshall(entityType)}`;
+      const info = await this._termFetcher.searchTerm(searchTerm);
       if (!info) {
         return;
       }
@@ -62,7 +64,8 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
       const { code, countryName, entityType } = entityData;
       const existingEntity = await this._oryxEntityModelModel.findOne({ code, countryName, entityType });
       if (existingEntity) {
-        const { count, abandoned, captured, damaged, destroyed, damagedAndCaptured, damagedAndAbandoned } = entityData;
+        const { count, abandoned, captured, damaged, destroyed, damagedAndCaptured, damagedAndAbandoned, info } =
+          entityData;
         existingEntity.count = count;
         existingEntity.abandoned = abandoned;
         existingEntity.captured = captured;
@@ -72,11 +75,13 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         existingEntity.damagedAndAbandoned = damagedAndAbandoned;
         await existingEntity.save();
         insertedEntityModels.push(existingEntity._id);
+        if (!info) {
+          await this._insertEntityInfo(existingEntity);
+        }
       } else {
         const newEntity = new this._oryxEntityModelModel(entityData);
         await newEntity.save();
         insertedEntityModels.push(newEntity._id);
-        await this._insertEntityInfo(newEntity);
       }
     }
     return insertedEntityModels;
