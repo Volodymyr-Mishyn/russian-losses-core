@@ -28,13 +28,6 @@ export class Application {
     return Application._instance;
   }
 
-  private async _isDataAlreadyPresent() {
-    const modDataPresent = await this._dataBaseAccessor.getIsMoDDataPresent();
-    const russiaOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('russia');
-    const ukraineOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('Ukraine');
-    return modDataPresent && russiaOryxDataPresent && ukraineOryxDataPresent;
-  }
-
   private async _runScraper() {
     const schedulerFactory = new SchedulerFactory();
     const scheduleConfig = config.get<ScheduledScrapping>('Scrapping');
@@ -47,10 +40,21 @@ export class Application {
       schedulerFactory,
       scheduleConfig,
     );
-    const isDataPresent = await this._isDataAlreadyPresent();
-    if (cliArgs.force || !isDataPresent) {
-      Logger.log(`Running initial scrapping`, '\x1b[36m');
+    if (cliArgs.force) {
+      Logger.log(`Force scrapping`, '\x1b[36m');
       await dataScrappingApp.runInitial();
+    } else {
+      const modDataPresent = await this._dataBaseAccessor.getIsAllMoDDataPresent();
+      const russiaOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('russia');
+      const ukraineOryxDataPresent = await this._dataBaseAccessor.getIsOryxCountryDataPresent('Ukraine');
+      if (!modDataPresent) {
+        Logger.log(`MoD data not present`, '\x1b[36m');
+        await dataScrappingApp.runInitialMoD();
+      }
+      if (!russiaOryxDataPresent || !ukraineOryxDataPresent) {
+        Logger.log(`Oryx data not present`, '\x1b[36m');
+        await dataScrappingApp.runInitialOryx();
+      }
     }
     Logger.log(`Scheduling scrapping`, '\x1b[36m');
     dataScrappingApp.runScheduled();

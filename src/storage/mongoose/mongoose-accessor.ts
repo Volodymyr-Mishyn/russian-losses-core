@@ -12,6 +12,7 @@ import { OryxEntityModelDocument } from './documents/oryx/oryx-entity-model.docu
 import { MoDModel } from './models/mod.model';
 import { MoDDayDocument } from './documents/mod/mod.document';
 import { EstablishedDatabaseConnection } from './mongoose-connector.decorator';
+import { DATE_OF_INVASION_INSTANCE } from '../../_constants/russian-invasion-date';
 
 export class MongooseAccessor implements DatabaseAccessor {
   private _modSaver = new MoDSaver();
@@ -38,6 +39,15 @@ export class MongooseAccessor implements DatabaseAccessor {
   public async getIsMoDDataPresent(): Promise<boolean> {
     const count = await this._MoDModel.find({}).count().exec();
     return count > 0;
+  }
+
+  @EstablishedDatabaseConnection({})
+  public async getIsAllMoDDataPresent(): Promise<boolean> {
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - DATE_OF_INVASION_INSTANCE.getTime();
+    const daysCount = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    const allCount = await this._MoDModel.find({}).count().exec();
+    return allCount + 10 >= daysCount;
   }
 
   @EstablishedDatabaseConnection({})
