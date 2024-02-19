@@ -7,6 +7,7 @@
     "test": "npx jest",
     "dev": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts --scraper --server",
     "dev:force": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts --scraper --server --force",
+    "dev:scrapper": "NODE_ENV=development ts-node -P ./tsconfig.json ./src/index.ts --scraper",
     "dev:reload": "nodemon",
     "prod:scraper": "NODE_ENV=production ts-node -P ./tsconfig.json ./src/index.ts --scraper",
     "prod:server": "NODE_ENV=production ts-node -P ./tsconfig.json ./src/index.ts --server"

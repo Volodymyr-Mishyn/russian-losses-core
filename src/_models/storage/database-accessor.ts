@@ -6,6 +6,7 @@ export interface DatabaseAccessor {
   getMoDSaver(): DataSaver<MoDData>;
   getOryxSaver(): DataSaver<OryxSideLosses>;
   getIsMoDDataPresent(): Promise<boolean>;
+  getIsAllMoDDataPresent(): Promise<boolean>;
   getIsOryxCountryDataPresent(countryName: string): Promise<boolean>;
   getAllMoDData(): Promise<MoDData>;
   getMoDDataInRange(startDate: string, endDate: string): Promise<MoDData>;

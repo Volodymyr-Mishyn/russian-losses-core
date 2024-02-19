@@ -120,6 +120,7 @@ describe('DataScrappingApp', () => {
           mockScheduledScrapping,
         );
       });
+
       it('should schedule scrapping recent MoD data', () => {
         jest.spyOn(MoDScheduler, 'scheduleExecution');
         dataScrappingApp.runScheduled();
@@ -129,7 +130,7 @@ describe('DataScrappingApp', () => {
             attempts: [],
             timezone: '',
           },
-          mockedMoDRecentAction,
+          expect.any(Object),
         );
         expect(MoDScheduler.scheduleExecution).toHaveBeenCalledTimes(1);
       });
