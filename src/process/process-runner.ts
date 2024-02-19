@@ -22,10 +22,10 @@ export class ProcessRunner extends EventEmitter {
     let processingFilteredResponse = false;
     this._process.stdout?.on('data', async (data) => {
       const output: string = data.toString();
-      Logger.log(`Process Runner: ${uniqueKey} chunk of data received. DATA: ${output.slice(0, 100)}...`);
+      Logger.log(`Process Runner: ${uniqueKey} chunk of data received. DATA: ${output.slice(0, 256)}...`);
       if (output.includes(uniqueKey)) {
         Logger.log(`Process Runner: ${uniqueKey} Starting to process response`);
-        Logger.log(`Process Runner:(success slice) ${output.slice(0, 100)} ...`);
+        Logger.log(`Process Runner:(success slice) ${output.slice(0, 256)} ...`);
         filteredResponse = output;
         processingFilteredResponse = true;
       } else if (processingFilteredResponse) {
@@ -33,7 +33,7 @@ export class ProcessRunner extends EventEmitter {
       }
       if (!processingFilteredResponse) {
         Logger.log(`Process Runner: still no ${uniqueKey} in response`);
-        Logger.log(`Process Runner: ${output.slice(0, 100)} ...`);
+        Logger.log(`Process Runner: ${output.slice(0, 256)} ...`);
         return;
       }
       try {
