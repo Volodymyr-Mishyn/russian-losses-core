@@ -26,7 +26,7 @@ export class DataScrappingApp {
     const scrapAllMoDAction = this._dataScrappingFacade.createScrapAllMoDReportsAction();
     const action: Action = {
       execute: async () => {
-        const isAllMoDDataPresent = await this._databaseAccessor.getIsMoDDataPresent();
+        const isAllMoDDataPresent = await this._databaseAccessor.getIsAllMoDDataPresent();
         if (!isAllMoDDataPresent) {
           Logger.log(`DS_APP:SOMETHING WENT WRONG, NO MoD Data`, '\x1b[33m');
           return scrapAllMoDAction.execute();
