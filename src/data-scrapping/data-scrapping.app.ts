@@ -6,7 +6,7 @@ import { ScheduledScrapping } from '../_models/schedule/scheduled-scrapping';
 import { DataScrappingFacade } from './data-scrapping-facade';
 import { Logger } from '../_helpers/logger';
 import { Action } from '../_models/action';
-
+const MS_IN_HOUR = 1000 * 60 * 60;
 export class DataScrappingApp {
   private _dataScrappingFacade!: DataScrappingFacade;
   constructor(
@@ -16,6 +16,13 @@ export class DataScrappingApp {
     private _scheduledScrapping?: ScheduledScrapping,
   ) {
     this._dataScrappingFacade = new DataScrappingFacade(this._processParameters, this._databaseAccessor);
+    this._healthLog();
+  }
+
+  private _healthLog(): void {
+    setInterval(() => {
+      Logger.log(`DS_APP_Scraper is Healthy`, '\x1b[32m');
+    }, MS_IN_HOUR);
   }
 
   private _runScheduledMoD(): void {
