@@ -18,4 +18,18 @@ export class MoDScrappingParametersImpl extends ScrappingParametersImpl implemen
     }
     return parameters;
   }
+
+  protected innerGetParametersObject() {
+    return {
+      source: {
+        type: this.source,
+        full: this.full,
+      },
+      output: {
+        type: this.outputType,
+        outputPath: this.outputPath,
+      },
+      headless: !this.notHeadless,
+    };
+  }
 }

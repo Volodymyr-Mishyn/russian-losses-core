@@ -1,7 +1,7 @@
-import { DataScrappingFacade } from 'src/data-scrapping/data-scrapping-facade';
+import { DataScrappingProcessFacade } from 'src/data-scrapping/facades/data-scrapping-process-facade';
 
 describe('DataScrappingFacade', () => {
-  let dataScrappingFacade: DataScrappingFacade;
+  let dataScrappingFacade: DataScrappingProcessFacade;
   let mockProcessParameters: any;
   let mockDatabaseAccessor: any;
 
@@ -16,7 +16,7 @@ describe('DataScrappingFacade', () => {
       getOryxSaver: jest.fn(),
     };
 
-    dataScrappingFacade = new DataScrappingFacade(mockProcessParameters, mockDatabaseAccessor);
+    dataScrappingFacade = new DataScrappingProcessFacade(mockDatabaseAccessor, mockProcessParameters);
   });
 
   describe('createScrapAllMoDReportsAction', () => {

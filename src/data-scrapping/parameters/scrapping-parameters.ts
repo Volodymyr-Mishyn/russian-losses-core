@@ -1,4 +1,9 @@
-import { OutputTypes, ScrappingParameters, SourceTypes } from '../../_models/scrapping/scrapping-parameters';
+import {
+  OutputTypes,
+  ScrapperStartParameters,
+  ScrappingParameters,
+  SourceTypes,
+} from '../../_models/scrapping/scrapping-parameters';
 
 export abstract class ScrappingParametersImpl implements ScrappingParameters {
   protected sourceType!: SourceTypes;
@@ -50,7 +55,13 @@ export abstract class ScrappingParametersImpl implements ScrappingParameters {
     return parameters;
   }
 
+  protected abstract innerGetParametersObject(): ScrapperStartParameters;
+
   public getParameters(): Array<string> {
     return this.innerGetParameters();
+  }
+
+  public getParametersObject(): ScrapperStartParameters {
+    return this.innerGetParametersObject();
   }
 }

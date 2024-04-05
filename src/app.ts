@@ -31,15 +31,13 @@ export class Application {
   private async _runScraper() {
     const schedulerFactory = new SchedulerFactory();
     const scheduleConfig = config.get<ScheduledScrapping>('Scrapping');
-    const dataScrappingApp = new DataScrappingApp(
-      this._dataBaseAccessor,
-      {
-        entryPath: childScriptPath,
-        runner: RunnerType.TS,
-      },
-      schedulerFactory,
-      scheduleConfig,
-    );
+    // for process approach
+    // {
+    //   entryPath: childScriptPath,
+    //   runner: RunnerType.TS,
+    // }
+    const dataScrappingApp = new DataScrappingApp(this._dataBaseAccessor, 'library', schedulerFactory, scheduleConfig);
+
     if (cliArgs.force) {
       Logger.log(`Force scrapping`, '\x1b[36m');
       await dataScrappingApp.runInitial();
@@ -67,11 +65,11 @@ export class Application {
 
   public async run() {
     Logger.log(`Application booted successfully`, '\x1b[36m');
-    if (cliArgs.scraper) {
-      await this._runScraper();
-    }
     if (cliArgs.server) {
       this._runServer();
+    }
+    if (cliArgs.scraper) {
+      await this._runScraper();
     }
   }
 }

@@ -1,6 +1,6 @@
 import { DataProcessor } from 'src/_models/data-processor';
 import { DataSaver } from 'src/_models/data-saver';
-import { ScrapDataAction } from 'src/data-scrapping/actions/scrap-data.action';
+import { ScrapDataProcessAction } from 'src/data-scrapping/actions/scrap-data-process.action';
 import { ProcessRunner } from 'src/process/process-runner';
 
 describe('ScrapDataAction', () => {
@@ -34,7 +34,7 @@ describe('ScrapDataAction', () => {
       jest
         .spyOn(mockDataProcessor as unknown as any, 'process')
         .mockImplementation((data: any) => ({ ...data, processed: true }));
-      const scrapDataAction = new ScrapDataAction(
+      const scrapDataAction = new ScrapDataProcessAction(
         mockProcessRunner as unknown as ProcessRunner,
         mockDataProcessor as unknown as DataProcessor<unknown, unknown>,
         mockDataSaver as unknown as DataSaver<unknown>,
@@ -50,7 +50,7 @@ describe('ScrapDataAction', () => {
       jest.spyOn(mockDataProcessor, 'process').mockImplementation(() => {
         throw new Error('Processing Error');
       });
-      const scrapDataAction = new ScrapDataAction(
+      const scrapDataAction = new ScrapDataProcessAction(
         mockProcessRunner as unknown as ProcessRunner,
         mockDataProcessor as unknown as DataProcessor<unknown, unknown>,
         mockDataSaver as unknown as DataSaver<unknown>,

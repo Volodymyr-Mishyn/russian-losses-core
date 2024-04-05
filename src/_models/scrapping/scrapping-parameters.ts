@@ -14,11 +14,25 @@ export enum OryxTypes {
   UKRAINE = 'Ukraine',
 }
 
+export interface ScrapperStartParameters {
+  source: {
+    type: SourceTypes;
+    full?: boolean;
+    subType?: OryxTypes;
+  };
+  output: {
+    type: OutputTypes;
+    outputPath?: string;
+  };
+  headless?: boolean;
+}
+
 export interface ScrappingParameters {
   notHeadless?: boolean;
   outputType: OutputTypes;
   outputPath?: string;
   getParameters: () => Array<string>;
+  getParametersObject: () => ScrapperStartParameters;
 }
 
 export interface OryxScrappingParameters extends ScrappingParameters {

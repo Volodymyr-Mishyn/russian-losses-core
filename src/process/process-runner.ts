@@ -17,7 +17,7 @@ export class ProcessRunner extends EventEmitter {
     if (!this._process) {
       return;
     }
-    const { entryPath, uniqueKey } = this._parameters;
+    const { uniqueKey } = this._parameters;
     let filteredResponse = '';
     let processingFilteredResponse = false;
     this._process.stdout?.on('data', async (data) => {

@@ -28,14 +28,5 @@ jobs:
           REPOSITORY: russian-losses
           IMAGE_TAG: ${{ github.sha }}-core
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile.server .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-      - name: Build, tag, and push docker image SCRAPER to Amazon ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: russian-losses
-          IMAGE_TAG: ${{ github.sha }}-scraper
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile.scraper .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
