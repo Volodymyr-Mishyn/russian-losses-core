@@ -3,19 +3,31 @@ import { delay } from '../_helpers/delay';
 import { ProcessBaseParameters } from '../_models/process/process-parameters';
 import { DatabaseAccessor } from '../_models/storage/database-accessor';
 import { ScheduledScrapping } from '../_models/schedule/scheduled-scrapping';
-import { DataScrappingFacade } from './data-scrapping-facade';
+import { DataScrappingProcessFacade } from './facades/data-scrapping-process-facade';
 import { Logger } from '../_helpers/logger';
 import { Action } from '../_models/action';
+import { DataScrappingLibraryFacade } from './facades/data-scrapping-library-facade';
+import { DataScrappingFacade } from './facades/data-scrapping-facade';
+
+export type DataScrappingApproach = 'library' | 'process';
+
 const MS_IN_HOUR = 1000 * 60 * 60;
 export class DataScrappingApp {
   private _dataScrappingFacade!: DataScrappingFacade;
   constructor(
     private _databaseAccessor: DatabaseAccessor,
-    private _processParameters: ProcessBaseParameters,
+    private _dataScrappingApproach: DataScrappingApproach = 'library',
     private _schedulerFactory?: SchedulerFactory,
     private _scheduledScrapping?: ScheduledScrapping,
+    private _processParameters?: ProcessBaseParameters,
   ) {
-    this._dataScrappingFacade = new DataScrappingFacade(this._processParameters, this._databaseAccessor);
+    if (this._dataScrappingApproach === 'library') {
+      this._dataScrappingFacade = new DataScrappingLibraryFacade(this._databaseAccessor);
+    } else if (this._dataScrappingApproach === 'process' && this._processParameters) {
+      this._dataScrappingFacade = new DataScrappingProcessFacade(this._databaseAccessor, this._processParameters);
+    } else {
+      throw new Error('Data Scrapping Approach not available');
+    }
     this._healthLog();
   }
 

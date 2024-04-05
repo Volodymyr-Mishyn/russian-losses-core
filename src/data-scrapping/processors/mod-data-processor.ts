@@ -15,6 +15,7 @@ import {
 import { CASUALTY_NAMES, LEGACY_NAME_MAPPINGS, NAME_CODE_MAPPINGS } from '../../_constants/mod-names';
 
 const MS_TO_DAYS = 1000 * 60 * 60 * 24;
+
 export class MoDDataProcessor implements DataProcessor<ScrapResult<MoDScrapData>, MoDData> {
   constructor(private _initialProcessing = false) {}
   private _calculateDayOfInvasion(date: Date): number {

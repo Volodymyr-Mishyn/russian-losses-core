@@ -36,7 +36,6 @@ export class MongooseConnector {
     const databaseConfig = config.get<DataBaseConfig>('DataBase.Config');
     const { DataBase, Host, Port, Protocol } = databaseConfig;
     const MONGODB_URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : `${Protocol}://${Host}:${Port}/${DataBase}`;
-    // Logger.log(`Mongoose: attempting connection to "${MONGODB_URI}"`, '\x1b[32m');
     Logger.log(`Mongoose: attempting connection to MongoDB`, '\x1b[32m');
     try {
       await mongoose.connect(MONGODB_URI, {
@@ -53,6 +52,10 @@ export class MongooseConnector {
   }
 
   public async connectDataBase(): Promise<void> {
+    Logger.log(
+      `Mongoose: starting connection to MongoDB (connectDataBase method); connectionEstablished=${this.connectionEstablished}`,
+      '\x1b[32m',
+    );
     if (this.connectionEstablished) {
       return;
     }

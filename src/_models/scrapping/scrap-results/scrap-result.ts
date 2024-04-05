@@ -5,6 +5,7 @@ export interface InnerScrapResult<D> {
   type: SourceTypes;
   data: D;
 }
+
 export interface ScrapResult<D> {
   success: boolean;
   result: InnerScrapResult<D>;

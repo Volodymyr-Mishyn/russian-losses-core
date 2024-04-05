@@ -16,19 +16,9 @@ services:
   core:
     build:
       context: .
-      dockerfile: Dockerfile.server
+      dockerfile: Dockerfile
     ports:
       - '8080:8080'
-    environment:
-      - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/russian-losses?authSource=admin
-    depends_on:
-      - mongodb
-
-  # Scraper service
-  scraper:
-    build:
-      context: .
-      dockerfile: Dockerfile.scraper
     environment:
       - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/russian-losses?authSource=admin
     depends_on:

@@ -1,4 +1,9 @@
-import { OryxScrappingParameters, OryxTypes, SourceTypes } from '../../_models/scrapping/scrapping-parameters';
+import {
+  OryxScrappingParameters,
+  OryxTypes,
+  ScrapperStartParameters,
+  SourceTypes,
+} from '../../_models/scrapping/scrapping-parameters';
 import { ScrappingParametersImpl } from './scrapping-parameters';
 
 export class OryxScrappingParametersImpl extends ScrappingParametersImpl implements OryxScrappingParameters {
@@ -19,5 +24,19 @@ export class OryxScrappingParametersImpl extends ScrappingParametersImpl impleme
     }
     parameters.push(`--oryxType=${this.subType}`);
     return parameters;
+  }
+
+  protected innerGetParametersObject(): ScrapperStartParameters {
+    return {
+      source: {
+        type: this.source,
+        subType: this.subType,
+      },
+      output: {
+        type: this.outputType,
+        outputPath: this.outputPath,
+      },
+      headless: !this.notHeadless,
+    };
   }
 }
