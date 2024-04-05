@@ -1,5 +1,5 @@
-FROM --platform=linux/amd64 node:current
-# FROM node:current
+# FROM --platform=linux/amd64 node:current
+FROM node:current
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chrome that Puppeteer
