@@ -25,7 +25,7 @@ WORKDIR /usr/src/core-app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Bundle app source
 COPY . .
