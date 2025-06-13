@@ -74,21 +74,21 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         existingEntity.damagedAndCaptured = damagedAndCaptured;
         existingEntity.damagedAndAbandoned = damagedAndAbandoned;
         await existingEntity.save();
-        insertedEntityModels.push(existingEntity._id);
+        insertedEntityModels.push(existingEntity._id as Types.ObjectId);
         if (!info) {
           await this._insertEntityInfo(existingEntity);
         }
       } else {
         const newEntity = new this._oryxEntityModelModel(entityData);
         await newEntity.save();
-        insertedEntityModels.push(newEntity._id);
+        insertedEntityModels.push(newEntity._id as Types.ObjectId);
       }
     }
     return insertedEntityModels;
   }
 
   private async _insertEntityTypes(entityTypesData: Array<EntityType>): Promise<Array<Types.ObjectId>> {
-    const insertedEntityTypeModels = [];
+    const insertedEntityTypeModels: Array<Types.ObjectId> = [];
     for (const entityTypeData of entityTypesData) {
       const { code, countryName, entities } = entityTypeData;
       const savedEntities = await this._insertEntities(entities);
@@ -99,14 +99,14 @@ export class OryxSaver extends MongooseSaver<OryxSideLosses> {
         existingEntityType.statistics = statistics;
         existingEntityType.entities = Array.from(savedEntitiesSet);
         await existingEntityType.save();
-        insertedEntityTypeModels.push(existingEntityType._id);
+        insertedEntityTypeModels.push(existingEntityType._id as Types.ObjectId);
       } else {
         const newEntityType = new this._oryxEntityTypeModel({
           ...entityTypeData,
           entities: Array.from(savedEntitiesSet),
         });
         await newEntityType.save();
-        insertedEntityTypeModels.push(newEntityType._id);
+        insertedEntityTypeModels.push(newEntityType._id as Types.ObjectId);
       }
     }
     return insertedEntityTypeModels;

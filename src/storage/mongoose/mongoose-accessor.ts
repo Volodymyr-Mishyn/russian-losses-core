@@ -37,7 +37,7 @@ export class MongooseAccessor implements DatabaseAccessor {
 
   @EstablishedDatabaseConnection({})
   public async getIsMoDDataPresent(): Promise<boolean> {
-    const count = await this._MoDModel.find({}).count().exec();
+    const count = await this._MoDModel.find({}).countDocuments().exec();
     return count > 0;
   }
 
@@ -46,7 +46,7 @@ export class MongooseAccessor implements DatabaseAccessor {
     const currentDate = new Date();
     const timeDifference = currentDate.getTime() - DATE_OF_INVASION_INSTANCE.getTime();
     const daysCount = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    const allCount = await this._MoDModel.find({}).count().exec();
+    const allCount = await this._MoDModel.find({}).countDocuments().exec();
     return allCount + 10 >= daysCount;
   }
 
